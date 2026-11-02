@@ -1,4 +1,4 @@
-// backend/src/controllers/certificates.controller.js
+// backend/src/controllers/certificate.controller.js
 const crypto = require('crypto');
 const QRCode = require('qrcode');
 const pool = require('../config/db'); // Conexión a Neon PostgreSQL
@@ -10,7 +10,7 @@ const FRONTEND_URL = process.env.FRONTEND_URL || 'https://sistema-certificados-m
 /**
  * 1. Listar certificados con filtros opcionales
  */
-const getCertificates = async (req, res) => {
+const listCertificates = async (req, res) => {
   try {
     const { estado } = req.query;
     let query = `
@@ -210,7 +210,8 @@ const revokeCertificate = async (req, res) => {
 };
 
 module.exports = {
-  getCertificates,
+  listCertificates,
+  getCertificates: listCertificates,
   issueCertificate,
   downloadCertificatePdf,
   revokeCertificate,
