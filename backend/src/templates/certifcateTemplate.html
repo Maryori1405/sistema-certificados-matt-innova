@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Certificado Oficial - Matt Innova Solution</title>
+  <style>
+    @page { size: A4 landscape; margin: 0; }
+    body {
+      margin: 0;
+      padding: 24px;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      background-color: #f8fafc;
+      color: #0f172a;
+      box-sizing: border-box;
+    }
+    .outer-border {
+      border: 3px solid #0f172a;
+      padding: 8px;
+      height: 94%;
+      background: white;
+      box-sizing: border-box;
+    }
+    .inner-border {
+      border: 1px solid #1e56ff;
+      padding: 30px 40px;
+      height: 90%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-sizing: border-box;
+    }
+    .header { display: flex; justify-content: space-between; align-items: center; }
+    .brand { font-size: 16px; font-weight: 800; color: #0f172a; }
+    .brand-sub { font-size: 9px; color: #1e56ff; font-weight: 600; }
+    .content { text-align: center; margin: 20px 0; }
+    .title-pre { font-size: 11px; text-transform: uppercase; color: #64748b; letter-spacing: 2px; }
+    .title-main { font-size: 26px; font-weight: 800; color: #0f172a; margin: 6px 0; }
+    .recipient { font-size: 22px; font-weight: 800; color: #1e40af; margin: 10px 0 2px 0; }
+    .dni { font-size: 11px; color: #64748b; }
+    .body-text { font-size: 13px; color: #334155; line-height: 1.6; max-width: 750px; margin: 15px auto 0 auto; }
+    .footer { display: flex; justify-content: space-between; align-items: flex-end; }
+    .signature-box { text-align: center; width: 220px; }
+    .signature-line { border-bottom: 1px solid #94a3b8; margin-bottom: 6px; }
+    .signature-name { font-size: 11px; font-weight: bold; }
+    .signature-role { font-size: 9px; color: #64748b; }
+    .qr-box { text-align: center; }
+    .qr-box img { width: 85px; height: 85px; }
+    .qr-code { font-size: 9px; font-weight: bold; color: #1e56ff; margin-top: 4px; }
+    .bottom-meta { display: flex; justify-content: space-between; font-size: 8px; color: #94a3b8; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <div class="outer-border">
+    <div class="inner-border">
+      <div class="header">
+        <div>
+          <div class="brand">MATT INNOVA SOLUTION</div>
+          <div class="brand-sub">E.I.R.L. • RUC: 20608934521</div>
+        </div>
+      </div>
+      <div class="content">
+        <div class="title-pre">Otorga el presente</div>
+        <div class="title-main">CERTIFICADO DE RECONOCIMIENTO</div>
+        <div class="title-pre" style="margin-top: 10px;">A favor de:</div>
+        <div class="recipient">{{NOMBRE_COMPLETO}}</div>
+        <div class="dni">Identificado con DNI N° {{DNI_ENMASCARADO}}</div>
+        <p class="body-text">
+          Por haber culminado satisfactoriamente su periodo de <strong>{{MODALIDAD}}</strong> en el área de {{AREA}}, convalidando un récord total de <strong>{{HORAS}} horas cronológicas</strong> con alto compromiso y calidad técnica.
+        </p>
+      </div>
+      <div class="footer">
+        <div class="signature-box">
+          <div class="signature-line"></div>
+          <div class="signature-name">Ing. Representante Legal</div>
+          <div class="signature-role">Matt Innova Solution E.I.R.L.</div>
+        </div>
+        <div class="qr-box">
+          <img src="{{QR_BASE64}}" alt="QR Verificación">
+          <div class="qr-code">{{CODIGO_OFICIAL}}</div>
+        </div>
+      </div>
+      <div class="bottom-meta">
+        <span>Fecha de Emisión: {{FECHA_EMISION}}</span>
+        <span style="color: #10b981; font-weight: bold;">• VÁLIDO & FIRMADO DIGITALMENTE</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
