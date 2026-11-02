@@ -17,236 +17,293 @@ const generateCertificatePdfBuffer = (data, qrDataUrl) => {
     const w = doc.page.width;   // 841.89 pt
     const h = doc.page.height;  // 595.28 pt
 
+    // Factores de escala para traducir el viewBox SVG (1000 x 707) a A4 Landscape (841.89 x 595.28)
+    const sx = w / 1000;
+    const sy = h / 707;
+    const px = (x) => x * sx;
+    const py = (y) => y * sy;
+
     const esOpcion2 = String(data.plantilla_modelo).includes('2') || 
-                      String(data.plantilla_modelo).toLowerCase().includes('moderno') ||
+                      String(data.plantilla_modelo).toLowerCase().includes('geom') ||
                       String(data.plantilla_modelo).toLowerCase().includes('tech');
 
+    // =========================================================================
+    // MARCOS Y FONDOS VECTORIALES (SVG A PDFKIT)
+    // =========================================================================
     if (esOpcion2) {
-      // ========================================================
-      // DISEÑO OPCIÓN 2: MODERNO TECH / INNOVACIÓN DIGITAL
-      // ========================================================
-      
-      // Fondo general
-      doc.rect(0, 0, w, h).fillColor('#FFFFFF').fill();
-
-      // Marco contenedor exterior
-      doc.roundedRect(25, 25, w - 50, h - 50, 12).strokeColor('#E2E8F0').lineWidth(1.5).stroke();
-      
-      // Barra superior decorativa estilo gradiente tecnológico
+      // -----------------------------------------------------------------------
+      // OPCIÓN 2: GEOMÉTRICA TECH
+      // -----------------------------------------------------------------------
       doc.save();
-      doc.roundedRect(25, 25, w - 50, 6, 3).fillColor('#1E56FF').fill();
+
+      // Marco fino rectangular celeste semitransparente
+      doc.lineWidth(1)
+         .strokeColor('#008DDA')
+         .opacity(0.35)
+         .roundedRect(px(15), py(15), px(970), py(677), 2)
+         .stroke();
+      doc.opacity(1);
+
+      // --- Polígonos Superior Izquierda ---
+      doc.fillColor('#0B192C')
+         .polygon([px(0), py(0)], [px(115), py(0)], [px(0), py(115)])
+         .fill();
+      doc.fillColor('#008DDA')
+         .polygon([px(0), py(115)], [px(115), py(0)], [px(135), py(0)], [px(0), py(135)])
+         .fill();
+      doc.fillColor('#41C9E2')
+         .opacity(0.8)
+         .polygon([px(0), py(135)], [px(135), py(0)], [px(145), py(0)], [px(0), py(145)])
+         .fill();
+      doc.opacity(1);
+
+      // --- Barras laterales (Ecualizador Tech) ---
+      doc.save();
+      doc.fillColor('#008DDA').opacity(0.35);
+      doc.roundedRect(px(10), py(210), px(3.5), py(20), 1).fill();
+      doc.roundedRect(px(18), py(195), px(3.5), py(35), 1).fill();
+      doc.roundedRect(px(26), py(180), px(3.5), py(55), 1).fill();
       doc.restore();
 
-      // Franja de acento izquierda confinada al interior de la tarjeta
+      // --- Red de nodos inferior izquierda ---
       doc.save();
-      doc.roundedRect(25, 31, 8, h - 62, 2).fillColor('#1E56FF').fill();
-      doc.roundedRect(33, 31, 4, h - 62, 1).fillColor('#38BDF8').fill();
+      doc.strokeColor('#008DDA').lineWidth(1).opacity(0.35);
+      doc.moveTo(px(30), py(580)).lineTo(px(65), py(540)).stroke();
+      doc.moveTo(px(65), py(540)).lineTo(px(100), py(565)).stroke();
+      doc.fillColor('#008DDA');
+      doc.circle(px(30), py(580), 2.5).fill();
+      doc.circle(px(65), py(540), 2.5).fill();
+      doc.circle(px(100), py(565), 2.5).fill();
       doc.restore();
 
-      // Marca de agua geométrica hexagonal / grid tech de fondo (muy tenue)
+      // --- Polígonos Inferior Izquierda ---
+      doc.fillColor('#0B192C')
+         .polygon([px(0), py(707)], [px(0), py(580)], [px(95), py(707)])
+         .fill();
+      doc.fillColor('#008DDA')
+         .polygon([px(0), py(707)], [px(95), py(707)], [px(190), py(707)], [px(0), py(645)])
+         .fill();
+
+      // --- Circuitos superior derecha ---
       doc.save();
-      doc.strokeColor('#1E56FF').lineWidth(0.5).opacity(0.04);
-      for (let x = 70; x < w - 60; x += 60) {
-        doc.moveTo(x, 40).lineTo(x + 30, h - 40).stroke();
-      }
-      for (let y = 50; y < h - 40; y += 45) {
-        doc.moveTo(60, y).lineTo(w - 50, y).stroke();
-      }
+      doc.strokeColor('#008DDA').lineWidth(1.6).lineCap('round');
+      doc.moveTo(px(890), py(0)).lineTo(px(940), py(50)).lineTo(px(1000), py(50)).stroke();
+      doc.fillColor('#008DDA');
+      doc.circle(px(890), py(0), 2.5).fill();
+      doc.circle(px(1000), py(50), 2.5).fill();
       doc.restore();
 
-      // Cabecera Moderna
-      doc.fontSize(15).fillColor('#0F172A').font('Helvetica-Bold')
-         .text('MATT INNOVA SOLUTION', 60, 50);
-      doc.fontSize(8).fillColor('#64748B').font('Helvetica')
-         .text('E.I.R.L. • RUC: 20608934521 | Innovación & Transformación Digital', 60, 68);
+      // --- Polígonos Superior Derecha ---
+      doc.fillColor('#0B192C')
+         .polygon([px(1000), py(0)], [px(885), py(0)], [px(1000), py(115)])
+         .fill();
+      doc.fillColor('#008DDA')
+         .polygon([px(1000), py(115)], [px(885), py(0)], [px(870), py(0)], [px(1000), py(130)])
+         .fill();
 
-      // Badge Tech Superior Derecho
-      doc.roundedRect(w - 195, 48, 140, 24, 6).fillColor('#F1F5F9').fill();
-      doc.roundedRect(w - 195, 48, 140, 24, 6).strokeColor('#CBD5E1').lineWidth(0.8).stroke();
-      doc.fontSize(7.5).fillColor('#1E56FF').font('Helvetica-Bold')
-         .text('CREDITACIÓN DIGITAL VERIFICADA', w - 195, 55, { width: 140, align: 'center' });
+      // --- Polígonos Inferior Derecha ---
+      doc.fillColor('#0B192C')
+         .polygon([px(1000), py(707)], [px(890), py(707)], [px(1000), py(595)])
+         .fill();
+      doc.fillColor('#008DDA')
+         .opacity(0.4)
+         .polygon([px(1000), py(707)], [px(865), py(707)], [px(1000), py(570)])
+         .fill();
 
-      // Línea divisoria
-      doc.moveTo(60, 90).lineTo(w - 55, 90).strokeColor('#F1F5F9').lineWidth(1.5).stroke();
-
-      // Encabezado del Certificado
-      doc.fontSize(9.5).fillColor('#1E56FF').font('Helvetica-Bold')
-         .text('CERTIFICACIÓN OFICIAL DE COMPETENCIAS', 0, 122, { align: 'center', characterSpacing: 1.5 });
-
-      doc.fontSize(22).fillColor('#0F172A').font('Helvetica-Bold')
-         .text('RECONOCIMIENTO AL RENDIMIENTO TÉCNICO', 0, 142, { align: 'center' });
-
-      doc.fontSize(9).fillColor('#64748B').font('Helvetica')
-         .text('Se certifica formalmente que:', 0, 180, { align: 'center' });
-
-      // Nombre del Titular
-      doc.fontSize(25).fillColor('#1E56FF').font('Helvetica-Bold')
-         .text(data.nombreCompleto || data.titular, 0, 200, { align: 'center' });
-
-      // DNI
-      doc.roundedRect((w / 2) - 60, 235, 120, 18, 9).fillColor('#F8FAFC').fill();
-      doc.roundedRect((w / 2) - 60, 235, 120, 18, 9).strokeColor('#E2E8F0').lineWidth(0.8).stroke();
-      doc.fontSize(8.5).fillColor('#475569').font('Helvetica-Bold')
-         .text(`DNI: ${data.dniEnmascarado || data.dni || '---'}`, 0, 239, { align: 'center' });
-
-      // Texto de Desempeño
-      const textoCuerpoMod = `Ha culminado satisfactoriamente sus actividades en la modalidad de ${data.modalidad || 'Prácticas Preprofesionales'} en el área de ${data.area_asignada || data.area || 'Ingeniería de Sistemas'}, demostrando alto nivel de excelencia técnica y compromiso profesional con un total convalidado de ${data.total_horas || 480} horas cronológicas.`;
-      
-      doc.fontSize(9.5).fillColor('#334155').font('Helvetica')
-         .text(textoCuerpoMod, 110, 270, { align: 'center', width: w - 220, lineGap: 4.5 });
-
-      // Bloque Inferior
-      const baseY = h - 138;
-
-      // Firma
-      doc.moveTo(85, baseY + 45).lineTo(255, baseY + 45).strokeColor('#CBD5E1').lineWidth(1).stroke();
-      doc.fontSize(9).fillColor('#0F172A').font('Helvetica-Bold')
-         .text('Ing. Representante Legal', 85, baseY + 50, { width: 170, align: 'center' });
-      doc.fontSize(7.5).fillColor('#64748B').font('Helvetica')
-         .text('Dirección de Tecnología e Innovación', 85, baseY + 62, { width: 170, align: 'center' });
-      doc.fontSize(7.5).fillColor('#94A3B8').font('Helvetica')
-         .text(`Fecha de Emisión: ${data.fecha_emision}`, 85, baseY + 78, { width: 170, align: 'center' });
-
-      // Código QR en tarjeta tech
-      if (qrDataUrl) {
-        const qrBase64 = qrDataUrl.replace(/^data:image\/png;base64,/, '');
-        const qrBuffer = Buffer.from(qrBase64, 'base64');
-        const qrX = w - 175;
-        
-        doc.roundedRect(qrX - 6, baseY - 6, 80, 80, 8).fillColor('#FFFFFF').fill();
-        doc.roundedRect(qrX - 6, baseY - 6, 80, 80, 8).strokeColor('#E2E8F0').lineWidth(1).stroke();
-        doc.image(qrBuffer, qrX, baseY, { width: 68, height: 68 });
-
-        doc.fontSize(7).fillColor('#0F172A').font('Helvetica-Bold')
-           .text(data.codigo_oficial, qrX - 10, baseY + 76, { width: 88, align: 'center' });
-
-        doc.roundedRect(qrX - 22, baseY + 90, 112, 16, 8).fillColor('#10B981').fill();
-        doc.fontSize(6.5).fillColor('#FFFFFF').font('Helvetica-Bold')
-           .text('✓ AUTENTICIDAD VERIFICADA', qrX - 22, baseY + 94, { width: 112, align: 'center' });
-      }
+      doc.restore();
 
     } else {
-      // ========================================================
-      // DISEÑO OPCIÓN 1: FORMAL ELITE MONUMENTAL
-      // ========================================================
+      // -----------------------------------------------------------------------
+      // OPCIÓN 1: FORMAL ELITE MONUMENTAL CON GUILLOCHE
+      // -----------------------------------------------------------------------
       doc.save();
-      doc.strokeColor('#0284c7').lineWidth(0.6).opacity(0.08);
-      const cx = w / 2;
-      const cy = h / 2 + 10;
-      doc.circle(cx, cy, 110).stroke();
-      doc.circle(cx, cy, 140).dash(4, { space: 2 }).stroke();
+
+      // --- Guilloche / Roseta de Seguridad Central ---
+      doc.save();
+      doc.strokeColor('#0284C7').lineWidth(0.8).opacity(0.06);
+      const cx = px(500);
+      const cy = py(375);
+      doc.circle(cx, cy, px(140)).dash(4, { space: 2 }).stroke();
       doc.undash();
-      doc.circle(cx, cy, 170).stroke();
-      doc.circle(cx, cy, 200).dash(6, { space: 3 }).stroke();
+      doc.circle(cx, cy, px(170)).stroke();
+      doc.circle(cx, cy, px(200)).dash(8, { space: 4 }).stroke();
       doc.undash();
 
-      for (let angle = 0; angle < 180; angle += 30) {
+      [15, -15, 45, -45].forEach((angle) => {
         doc.save();
         doc.translate(cx, cy);
         doc.rotate(angle);
-        doc.ellipse(0, 0, 190, 115).stroke();
+        doc.ellipse(0, 0, px(240), py(150)).stroke();
         doc.restore();
-      }
+      });
       doc.restore();
 
-      doc.lineWidth(5).strokeColor('#0A1931').rect(15, 15, w - 30, h - 30).stroke();
-      doc.lineWidth(2).strokeColor('#FFFFFF').rect(20, 20, w - 40, h - 40).stroke();
-      doc.lineWidth(2).strokeColor('#0284C7').rect(24, 24, w - 48, h - 48).stroke();
-      doc.lineWidth(0.8).strokeColor('#0A1931').opacity(0.3).rect(30, 30, w - 60, h - 60).stroke();
+      // --- Marcos Perimetrales Concéntricos ---
+      doc.lineWidth(5).strokeColor('#0A1931').rect(px(15), py(15), px(970), py(677)).stroke();
+      doc.lineWidth(2).strokeColor('#FFFFFF').rect(px(22), py(22), px(956), py(663)).stroke();
+      doc.lineWidth(2).strokeColor('#0284C7').rect(px(28), py(28), px(944), py(651)).stroke();
+      doc.lineWidth(0.8).strokeColor('#0A1931').opacity(0.2).rect(px(35), py(35), px(930), py(637)).stroke();
       doc.opacity(1);
 
+      // --- Esquinas Biseladas Sólidas ---
       doc.fillColor('#0A1931');
-      doc.polygon([15, 65], [65, 15], [42, 15], [15, 42]).fill();
-      doc.polygon([w - 15, 65], [w - 65, 15], [w - 42, 15], [w - 15, 42]).fill();
-      doc.polygon([15, h - 65], [65, h - 15], [42, h - 15], [15, h - 42]).fill();
-      doc.polygon([w - 15, h - 65], [w - 65, h - 15], [w - 42, h - 15], [w - 15, h - 42]).fill();
+      doc.polygon([px(15), py(75)], [px(75), py(15)], [px(45), py(15)], [px(15), py(45)]).fill();
+      doc.polygon([px(985), py(75)], [px(925), py(15)], [px(955), py(15)], [px(985), py(45)]).fill();
+      doc.polygon([px(15), py(632)], [px(75), py(692)], [px(45), py(692)], [px(15), py(662)]).fill();
+      doc.polygon([px(985), py(632)], [px(925), py(692)], [px(955), py(692)], [px(985), py(662)]).fill();
 
       doc.fillColor('#0284C7');
-      doc.polygon([15, 78], [78, 15], [70, 15], [15, 70]).fill();
-      doc.polygon([w - 15, 78], [w - 78, 15], [w - 70, 15], [w - 15, 70]).fill();
-      doc.polygon([15, h - 78], [78, h - 15], [70, h - 15], [15, h - 70]).fill();
-      doc.polygon([w - 15, h - 78], [w - 78, h - 15], [w - 70, h - 15], [w - 15, h - 70]).fill();
+      doc.polygon([px(15), py(92)], [px(92), py(15)], [px(82), py(15)], [px(15), py(82)]).fill();
+      doc.polygon([px(985), py(92)], [px(908), py(15)], [px(918), py(15)], [px(985), py(82)]).fill();
+      doc.polygon([px(15), py(615)], [px(92), py(692)], [px(82), py(692)], [px(15), py(625)]).fill();
+      doc.polygon([px(985), py(615)], [px(908), py(692)], [px(918), py(692)], [px(985), py(625)]).fill();
 
+      // --- Circuitos perimetrales en bordes ---
+      doc.strokeColor('#0284C7').lineWidth(1.4).lineCap('round');
+      // Sup Izq
+      doc.moveTo(px(15), py(115)).lineTo(px(35), py(115)).lineTo(px(48), py(102)).lineTo(px(48), py(80)).stroke();
+      doc.circle(px(48), py(80), 2).fillColor('#0284C7').fill();
+      doc.moveTo(px(115), py(15)).lineTo(px(115), py(35)).lineTo(px(102), py(48)).lineTo(px(80), py(48)).stroke();
+      doc.circle(px(80), py(48), 2.2).fillColor('#0284C7').fill();
+      // Sup Der
+      doc.moveTo(px(985), py(115)).lineTo(px(965), py(115)).lineTo(px(952), py(102)).lineTo(px(952), py(80)).stroke();
+      doc.circle(px(952), py(80), 2).fillColor('#0284C7').fill();
+      doc.moveTo(px(885), py(15)).lineTo(px(885), py(35)).lineTo(px(898), py(48)).lineTo(px(920), py(48)).stroke();
+      doc.circle(px(920), py(48), 2.2).fillColor('#0284C7').fill();
+      // Inf Izq
+      doc.moveTo(px(15), py(592)).lineTo(px(35), py(592)).lineTo(px(48), py(605)).lineTo(px(48), py(627)).stroke();
+      doc.circle(px(48), py(627), 2).fillColor('#0284C7').fill();
+      doc.moveTo(px(115), py(692)).lineTo(px(115), py(672)).lineTo(px(102), py(659)).lineTo(px(80), py(659)).stroke();
+      doc.circle(px(80), py(659), 2.2).fillColor('#0284C7').fill();
+      // Inf Der
+      doc.moveTo(px(985), py(592)).lineTo(px(965), py(592)).lineTo(px(952), py(605)).lineTo(px(952), py(627)).stroke();
+      doc.circle(px(952), py(627), 2).fillColor('#0284C7').fill();
+      doc.moveTo(px(885), py(692)).lineTo(px(885), py(672)).lineTo(px(898), py(659)).lineTo(px(920), py(659)).stroke();
+      doc.circle(px(920), py(659), 2.2).fillColor('#0284C7').fill();
+
+      // Pistas punteadas laterales
+      doc.save();
       doc.strokeColor('#0284C7').lineWidth(1.2).lineCap('round');
-      doc.moveTo(15, 95).lineTo(32, 95).lineTo(44, 83).lineTo(44, 65).stroke();
-      doc.circle(44, 65, 1.8).fillColor('#0284C7').fill();
-      doc.moveTo(95, 15).lineTo(95, 32).lineTo(83, 44).lineTo(65, 44).stroke();
-      doc.circle(65, 44, 1.8).fillColor('#0284C7').fill();
+      doc.moveTo(px(10), py(300)).lineTo(px(10), py(405)).dash(5, { space: 3 }).stroke();
+      doc.undash();
+      doc.circle(px(10), py(295), 2).fillColor('#0284C7').fill();
+      doc.circle(px(10), py(410), 2).fillColor('#0284C7').fill();
 
-      doc.moveTo(w - 15, 95).lineTo(w - 32, 95).lineTo(w - 44, 83).lineTo(w - 44, 65).stroke();
-      doc.circle(w - 44, 65, 1.8).fillColor('#0284C7').fill();
-      doc.moveTo(w - 95, 15).lineTo(w - 95, 32).lineTo(w - 83, 44).lineTo(w - 65, 44).stroke();
-      doc.circle(w - 65, 44, 1.8).fillColor('#0284C7').fill();
+      doc.moveTo(px(990), py(300)).lineTo(px(990), py(405)).dash(5, { space: 3 }).stroke();
+      doc.undash();
+      doc.circle(px(990), py(295), 2).fillColor('#0284C7').fill();
+      doc.circle(px(990), py(410), 2).fillColor('#0284C7').fill();
+      doc.restore();
 
-      doc.moveTo(15, h - 95).lineTo(32, h - 95).lineTo(44, h - 83).lineTo(44, h - 65).stroke();
-      doc.circle(44, h - 65, 1.8).fillColor('#0284C7').fill();
-      doc.moveTo(95, h - 15).lineTo(95, h - 32).lineTo(83, h - 44).lineTo(65, h - 44).stroke();
-      doc.circle(65, h - 44, 1.8).fillColor('#0284C7').fill();
+      doc.restore();
+    }
 
-      doc.moveTo(w - 15, h - 95).lineTo(w - 32, h - 95).lineTo(w - 44, h - 83).lineTo(w - 44, h - 65).stroke();
-      doc.circle(w - 44, h - 65, 1.8).fillColor('#0284C7').fill();
-      doc.moveTo(w - 95, h - 15).lineTo(w - 95, h - 32).lineTo(w - 83, h - 44).lineTo(w - 65, h - 44).stroke();
-      doc.circle(w - 65, h - 44, 1.8).fillColor('#0284C7').fill();
+    // =========================================================================
+    // 1. CABECERA INSTITUCIONAL IDÉNTICA A LA VISTA PREVIA
+    // =========================================================================
+    // Lado Izquierdo
+    doc.fontSize(13.5).fillColor('#0A1931').font('Helvetica-Bold')
+       .text('MATT INNOVA SOLUTION', 58, 48);
+    doc.fontSize(8.5).fillColor('#64748B').font('Courier-Bold')
+       .text('E.I.R.L. • RUC: 20608934521', 58, 64);
 
-      doc.fontSize(13).fillColor('#0A1931').font('Helvetica-Bold')
-         .text('MATT INNOVA SOLUTION', 55, 48);
-      doc.fontSize(8.5).fillColor('#64748B').font('Helvetica')
-         .text('E.I.R.L. • RUC: 20608934521', 55, 64);
+    // Lado Derecho: Logotipo Oficial SVG renderizado vectorialmente
+    const logoX = w - 175;
+    const logoY = 44;
 
-      doc.fontSize(11).fillColor('#0284C7').font('Helvetica-Bold')
-         .text('MATT INNOVA', w - 190, 48, { align: 'right', width: 135 });
-      doc.fontSize(7).fillColor('#0A1931').font('Helvetica-Bold')
-         .text('SOLUTION', w - 190, 61, { align: 'right', width: 135 });
-      doc.fontSize(5.5).fillColor('#94A3B8').font('Helvetica')
-         .text('SOLUCIONES TI QUE TRANSFORMAN', w - 190, 71, { align: 'right', width: 135 });
+    // Ícono MIS
+    doc.save();
+    doc.circle(logoX + 16, logoY + 16, 12).lineWidth(2.5).strokeColor('#0284C7').dash(4, { space: 2 }).stroke();
+    doc.undash();
+    doc.fontSize(8).fillColor('#0284C7').font('Helvetica-Bold')
+       .text('mis', logoX + 8, logoY + 12, { width: 16, align: 'center' });
+    doc.restore();
 
-      doc.fontSize(9).fillColor('#64748B').font('Helvetica-Bold')
-         .text('OTORGA EL PRESENTE', 0, 120, { align: 'center', characterSpacing: 2 });
+    // Texto Logotipo
+    doc.fontSize(12).fillColor('#0284C7').font('Helvetica-Bold')
+       .text('MATT INNOVA', logoX + 36, logoY + 4, { align: 'left' });
+    doc.fontSize(7.5).fillColor('#0A1931').font('Helvetica-Bold')
+       .text('SOLUTION', logoX + 36, logoY + 17, { align: 'left', characterSpacing: 1.5 });
+    doc.fontSize(5.2).fillColor('#94A3B8').font('Helvetica-Bold')
+       .text('SOLUCIONES TI QUE TRANSFORMAN', logoX - 10, logoY + 30, { width: 135, align: 'right' });
 
-      doc.fontSize(22).fillColor('#0A1931').font('Times-Bold')
-         .text('CERTIFICADO DE RECONOCIMIENTO', 0, 142, { align: 'center', characterSpacing: 1 });
+    // =========================================================================
+    // 2. CUERPO DEL RECONOCIMIENTO
+    // =========================================================================
+    doc.fontSize(9).fillColor('#475569').font('Helvetica-Bold')
+       .text('OTORGA EL PRESENTE', 0, 122, { align: 'center', characterSpacing: 2.5 });
 
-      doc.fontSize(9.5).fillColor('#64748B').font('Times-Italic')
-         .text('A favor de:', 0, 180, { align: 'center' });
+    // Título Principal en Serifa
+    doc.fontSize(22).fillColor('#0A1931').font('Times-Bold')
+       .text('CERTIFICADO DE RECONOCIMIENTO', 0, 144, { align: 'center', characterSpacing: 1 });
 
-      doc.fontSize(26).fillColor('#0A1931').font('Times-BoldItalic')
-         .text(data.nombreCompleto || data.titular, 0, 202, { align: 'center' });
+    doc.fontSize(9.5).fillColor('#64748B').font('Times-Italic')
+       .text('A favor de:', 0, 180, { align: 'center' });
 
-      doc.fontSize(8.5).fillColor('#475569').font('Helvetica')
-         .text(`Identificado con DNI N° ${data.dniEnmascarado || data.dni || '---'}`, 0, 238, { align: 'center' });
+    // Titular en fuente cursiva / caligráfica clásica
+    doc.fontSize(28).fillColor('#0A1931').font('Times-BoldItalic')
+       .text(data.nombreCompleto || data.titular, 0, 202, { align: 'center' });
 
-      const textoCuerpo = `Por haber culminado satisfactoriamente su periodo de ${data.modalidad || 'Prácticas Preprofesionales'} en el área de ${data.area_asignada || data.area || 'Ingeniería de Sistemas'}, demostrando alto compromiso ético y profesional en los proyectos asignados. Totalizando un récord convalidado de ${data.total_horas || 480} horas cronológicas.`;
-      
-      doc.fontSize(10).fillColor('#334155').font('Helvetica')
-         .text(textoCuerpo, 110, 268, { align: 'center', width: w - 220, lineGap: 4.5 });
+    // DNI Enmascarado
+    doc.fontSize(8.5).fillColor('#475569').font('Helvetica')
+       .text('Identificado con DNI N° ', (w / 2) - 80, 240, { continued: true })
+       .font('Courier-Bold').fillColor('#0A1931')
+       .text(data.dniEnmascarado || data.dni || '---');
 
-      const baseY = h - 140;
+    // Párrafo convalidado justificado
+    const modalidad = data.modalidad || 'Prácticas Preprofesionales';
+    const area = data.area_asignada || data.area || 'Ingeniería de Sistemas';
+    const detalle = data.desempeno_detalle ? `${data.desempeno_detalle} ` : 'demostrando alto compromiso ético y profesional en los proyectos asignados. ';
+    const horas = data.total_horas || 480;
 
-      doc.moveTo(80, baseY + 45).lineTo(250, baseY + 45).strokeColor('#94A3B8').lineWidth(1).stroke();
-      doc.fontSize(9).fillColor('#0A1931').font('Helvetica-Bold')
-         .text('Ing. Representante Legal', 80, baseY + 50, { width: 170, align: 'center' });
-      doc.fontSize(7.5).fillColor('#64748B').font('Helvetica')
-         .text('Matt Innova Solution E.I.R.L.', 80, baseY + 62, { width: 170, align: 'center' });
-      doc.fontSize(7.5).fillColor('#94A3B8').font('Helvetica')
-         .text(`Fecha de Emisión: ${data.fecha_emision}`, 80, baseY + 80, { width: 170, align: 'center' });
+    const textoCuerpo = `Por haber culminado satisfactoriamente su periodo de ${modalidad} en el área de ${area}, ${detalle}Totalizando un récord convalidado de ${horas} horas cronológicas.`;
 
-      if (qrDataUrl) {
-        const qrBase64 = qrDataUrl.replace(/^data:image\/png;base64,/, '');
-        const qrBuffer = Buffer.from(qrBase64, 'base64');
-        const qrX = w - 165;
-        
-        doc.roundedRect(qrX - 4, baseY - 6, 76, 76, 3).strokeColor('#CBD5E1').lineWidth(0.8).stroke();
-        doc.image(qrBuffer, qrX, baseY - 2, { width: 68, height: 68 });
+    doc.fontSize(10).fillColor('#334155').font('Helvetica')
+       .text(textoCuerpo, 105, 268, {
+         align: 'center',
+         width: w - 210,
+         lineGap: 4.5,
+       });
 
-        doc.fontSize(7.5).fillColor('#0A1931').font('Helvetica-Bold')
-           .text(data.codigo_oficial || 'CERT-OFICIAL', qrX - 10, baseY + 72, { width: 88, align: 'center' });
-        doc.fontSize(6).fillColor('#94A3B8').font('Helvetica')
-           .text('Escanee para verificar', qrX - 10, baseY + 82, { width: 88, align: 'center' });
+    // =========================================================================
+    // 3. PIE DE PÁGINA (FIRMA, FECHA Y QR TECH)
+    // =========================================================================
+    const baseY = h - 138;
 
-        doc.roundedRect(qrX - 25, baseY + 93, 118, 14, 7).fillColor('#0284C7').fill();
-        doc.fontSize(6).fillColor('#FFFFFF').font('Helvetica-Bold')
-           .text('✓ VÁLIDO & FIRMADO DIGITALMENTE', qrX - 25, baseY + 97, { width: 118, align: 'center' });
-      }
+    // --- Bloque Izquierdo: Firma y Fecha ---
+    // Línea de puntos de firma
+    doc.save();
+    doc.moveTo(85, baseY + 45).lineTo(255, baseY + 45).strokeColor('#94A3B8').lineWidth(1).dash(4, { space: 3 }).stroke();
+    doc.restore();
+
+    doc.fontSize(9.5).fillColor('#0A1931').font('Helvetica-Bold')
+       .text('Ing. Representante Legal', 85, baseY + 50, { width: 170, align: 'center' });
+    doc.fontSize(8).fillColor('#64748B').font('Helvetica')
+       .text('Matt Innova Solution E.I.R.L.', 85, baseY + 62, { width: 170, align: 'center' });
+    doc.fontSize(7.5).fillColor('#94A3B8').font('Courier')
+       .text(`Fecha de Emisión: ${data.fecha_emision}`, 85, baseY + 80, { width: 170, align: 'left' });
+
+    // --- Bloque Derecho: Código QR y Sello Tech ---
+    if (qrDataUrl) {
+      const qrBase64 = qrDataUrl.replace(/^data:image\/png;base64,/, '');
+      const qrBuffer = Buffer.from(qrBase64, 'base64');
+      const qrX = w - 165;
+
+      // Recuadro QR blanco con borde suave
+      doc.roundedRect(qrX - 3, baseY - 5, 74, 74, 3).fillColor('#FFFFFF').fill();
+      doc.roundedRect(qrX - 3, baseY - 5, 74, 74, 3).strokeColor('#CBD5E1').lineWidth(0.8).stroke();
+      doc.image(qrBuffer, qrX, baseY - 2, { width: 68, height: 68 });
+
+      // Código Oficial y leyenda
+      doc.fontSize(7.5).fillColor('#334155').font('Courier-Bold')
+         .text(data.codigo_oficial || 'CERT-OFICIAL', qrX - 10, baseY + 73, { width: 88, align: 'center' });
+      doc.fontSize(6).fillColor('#94A3B8').font('Helvetica')
+         .text('Escanee para verificar', qrX - 10, baseY + 83, { width: 88, align: 'center' });
+
+      // Badge Cápsula Celeste Tech (#0284C7)
+      doc.roundedRect(qrX - 25, baseY + 94, 118, 14, 7).fillColor('#0284C7').fill();
+      doc.fontSize(6.5).fillColor('#FFFFFF').font('Helvetica-Bold')
+         .text('✓ VÁLIDO & FIRMADO DIGITALMENTE', qrX - 25, baseY + 98, { width: 118, align: 'center' });
     }
 
     doc.end();
