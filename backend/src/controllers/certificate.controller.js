@@ -25,7 +25,8 @@ const listCertificates = async (req, res) => {
         c.fecha_emision, 
         c.token_sha256, 
         c.estado, 
-        c.motivo_revocacion
+        c.motivo_revocacion,
+        c.plantilla_modelo
       FROM certificados c
       INNER JOIN usuarios u ON c.usuario_id = u.id
     `;
@@ -88,7 +89,7 @@ const issueCertificate = async (req, res) => {
       total_horas || 480,
       fecha_emision || new Date(),
       tokenSha256,
-      plantilla_modelo || 'Plantilla Formal Elite',
+      plantilla_modelo || '1',
       desempeno_detalle || ''
     ];
 
@@ -105,7 +106,7 @@ const issueCertificate = async (req, res) => {
 };
 
 /**
- * 3. Descargar Certificado en PDF Vectorial con QR a Vercel
+ * 3. Descargar Certificado en PDF Vectorial según la plantilla elegida
  */
 const downloadCertificatePdf = async (req, res) => {
   try {
@@ -122,7 +123,8 @@ const downloadCertificatePdf = async (req, res) => {
         c.total_horas, 
         c.fecha_emision, 
         c.token_sha256, 
-        c.estado
+        c.estado,
+        c.plantilla_modelo
       FROM certificados c
       INNER JOIN usuarios u ON c.usuario_id = u.id
       WHERE c.id = $1
@@ -158,12 +160,13 @@ const downloadCertificatePdf = async (req, res) => {
     const pdfData = {
       ...cert,
       dniEnmascarado,
+      plantilla_modelo: cert.plantilla_modelo || '1',
       fecha_emision: cert.fecha_emision 
         ? new Date(cert.fecha_emision).toISOString().split('T')[0] 
         : new Date().toISOString().split('T')[0],
     };
 
-    // Generar el binario con el diseño Monumental Formal Elite
+    // Generar el binario con el diseño correspondiente (Opción 1 u Opción 2)
     const pdfBuffer = await generateCertificatePdfBuffer(pdfData, qrDataUrl);
 
     res.setHeader('Content-Type', 'application/pdf');
