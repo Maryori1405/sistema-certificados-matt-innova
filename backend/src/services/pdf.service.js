@@ -198,10 +198,10 @@ const generateCertificatePdfBuffer = (data, qrDataUrl) => {
     }
 
     // =========================================================================
-    // 1. CABECERA INSTITUCIONAL (DESPLAZADA MÁS ABAJO Y HACIA EL CENTRO)
+    // 1. CABECERA INSTITUCIONAL (ALTURA AJUSTADA A Y=80)
     // =========================================================================
-    const headerLeftX = esOpcion2 ? 88 : 75;
-    const headerY = 92; // Altura holgada respecto al borde superior
+    const headerLeftX = esOpcion2 ? 84 : 70;
+    const headerY = 80; // Altura intermedia óptima
 
     // Membrete Izquierdo
     doc.fontSize(13.5).fillColor('#0A1931').font('Helvetica-Bold')
@@ -210,7 +210,7 @@ const generateCertificatePdfBuffer = (data, qrDataUrl) => {
        .text('E.I.R.L. • RUC: 20608934521', headerLeftX, headerY + 16);
 
     // Logotipo MIS Derecho
-    const logoX = w - 200;
+    const logoX = w - 195;
     const logoY = headerY - 5;
 
     // Ícono MIS
@@ -230,24 +230,24 @@ const generateCertificatePdfBuffer = (data, qrDataUrl) => {
        .text('SOLUCIONES TI QUE TRANSFORMAN', logoX - 10, logoY + 30, { width: 135, align: 'right' });
 
     // =========================================================================
-    // 2. CUERPO DEL RECONOCIMIENTO (RECALCULADO)
+    // 2. CUERPO DEL RECONOCIMIENTO (REBALANCEADO)
     // =========================================================================
     doc.fontSize(9).fillColor('#475569').font('Helvetica-Bold')
-       .text('OTORGA EL PRESENTE', 0, 150, { align: 'center', characterSpacing: 2.5 });
+       .text('OTORGA EL PRESENTE', 0, 142, { align: 'center', characterSpacing: 2.5 });
 
     doc.fontSize(22).fillColor('#0A1931').font('Times-Bold')
-       .text('CERTIFICADO DE RECONOCIMIENTO', 0, 170, { align: 'center', characterSpacing: 1 });
+       .text('CERTIFICADO DE RECONOCIMIENTO', 0, 162, { align: 'center', characterSpacing: 1 });
 
     doc.fontSize(9.5).fillColor('#64748B').font('Times-Italic')
-       .text('A favor de:', 0, 204, { align: 'center' });
+       .text('A favor de:', 0, 196, { align: 'center' });
 
     // Nombre del Titular
     doc.fontSize(28).fillColor('#0A1931').font('Times-BoldItalic')
-       .text(data.nombreCompleto || data.titular, 0, 224, { align: 'center' });
+       .text(data.nombreCompleto || data.titular, 0, 216, { align: 'center' });
 
     // DNI Enmascarado
     doc.fontSize(8.5).fillColor('#475569').font('Helvetica')
-       .text('Identificado con DNI N° ', (w / 2) - 80, 258, { continued: true })
+       .text('Identificado con DNI N° ', (w / 2) - 80, 250, { continued: true })
        .font('Courier-Bold').fillColor('#0A1931')
        .text(data.dniEnmascarado || data.dni || '---');
 
@@ -260,7 +260,7 @@ const generateCertificatePdfBuffer = (data, qrDataUrl) => {
     const textoCuerpo = `Por haber culminado satisfactoriamente su periodo de ${modalidad} en el área de ${area}, ${detalle}Totalizando un récord convalidado de ${horas} horas cronológicas.`;
 
     doc.fontSize(10).fillColor('#334155').font('Helvetica')
-       .text(textoCuerpo, 105, 286, {
+       .text(textoCuerpo, 105, 278, {
          align: 'center',
          width: w - 210,
          lineGap: 4.5,
