@@ -1,7 +1,7 @@
 // backend/src/controllers/certificates.controller.js
 const crypto = require('crypto');
 const QRCode = require('qrcode');
-const pool = require('../database'); // Conexión a Neon PostgreSQL
+const pool = require('../config/database'); // Conexión a Neon PostgreSQL
 const { generateCertificatePdfBuffer } = require('../services/pdf.service');
 
 // URL base oficial del Frontend en Vercel
