@@ -17,7 +17,7 @@ const generateCertificatePdfBuffer = (data, qrDataUrl) => {
     const w = doc.page.width;   // 841.89 pt
     const h = doc.page.height;  // 595.28 pt
 
-    // Factores de escala para traducir el viewBox SVG (1000 x 707) a A4 Landscape (841.89 x 595.28)
+    // Factores de escala (viewBox 1000 x 707 a A4 Landscape)
     const sx = w / 1000;
     const sy = h / 707;
     const px = (x) => x * sx;
@@ -36,7 +36,7 @@ const generateCertificatePdfBuffer = (data, qrDataUrl) => {
       // -----------------------------------------------------------------------
       doc.save();
 
-      // Marco fino rectangular celeste semitransparente
+      // Marco fino rectangular
       doc.lineWidth(1)
          .strokeColor('#008DDA')
          .opacity(0.35)
@@ -44,7 +44,7 @@ const generateCertificatePdfBuffer = (data, qrDataUrl) => {
          .stroke();
       doc.opacity(1);
 
-      // --- Polígonos Superior Izquierda ---
+      // Polígonos Superior Izquierda
       doc.fillColor('#0B192C')
          .polygon([px(0), py(0)], [px(115), py(0)], [px(0), py(115)])
          .fill();
@@ -57,7 +57,7 @@ const generateCertificatePdfBuffer = (data, qrDataUrl) => {
          .fill();
       doc.opacity(1);
 
-      // --- Barras laterales (Ecualizador Tech) ---
+      // Barras laterales (Ecualizador)
       doc.save();
       doc.fillColor('#008DDA').opacity(0.35);
       doc.roundedRect(px(10), py(210), px(3.5), py(20), 1).fill();
@@ -65,7 +65,7 @@ const generateCertificatePdfBuffer = (data, qrDataUrl) => {
       doc.roundedRect(px(26), py(180), px(3.5), py(55), 1).fill();
       doc.restore();
 
-      // --- Red de nodos inferior izquierda ---
+      // Red de nodos inferior izquierda
       doc.save();
       doc.strokeColor('#008DDA').lineWidth(1).opacity(0.35);
       doc.moveTo(px(30), py(580)).lineTo(px(65), py(540)).stroke();
@@ -76,7 +76,7 @@ const generateCertificatePdfBuffer = (data, qrDataUrl) => {
       doc.circle(px(100), py(565), 2.5).fill();
       doc.restore();
 
-      // --- Polígonos Inferior Izquierda ---
+      // Polígonos Inferior Izquierda
       doc.fillColor('#0B192C')
          .polygon([px(0), py(707)], [px(0), py(580)], [px(95), py(707)])
          .fill();
@@ -84,7 +84,7 @@ const generateCertificatePdfBuffer = (data, qrDataUrl) => {
          .polygon([px(0), py(707)], [px(95), py(707)], [px(190), py(707)], [px(0), py(645)])
          .fill();
 
-      // --- Circuitos superior derecha ---
+      // Circuitos superior derecha
       doc.save();
       doc.strokeColor('#008DDA').lineWidth(1.6).lineCap('round');
       doc.moveTo(px(890), py(0)).lineTo(px(940), py(50)).lineTo(px(1000), py(50)).stroke();
@@ -93,7 +93,7 @@ const generateCertificatePdfBuffer = (data, qrDataUrl) => {
       doc.circle(px(1000), py(50), 2.5).fill();
       doc.restore();
 
-      // --- Polígonos Superior Derecha ---
+      // Polígonos Superior Derecha
       doc.fillColor('#0B192C')
          .polygon([px(1000), py(0)], [px(885), py(0)], [px(1000), py(115)])
          .fill();
@@ -101,7 +101,7 @@ const generateCertificatePdfBuffer = (data, qrDataUrl) => {
          .polygon([px(1000), py(115)], [px(885), py(0)], [px(870), py(0)], [px(1000), py(130)])
          .fill();
 
-      // --- Polígonos Inferior Derecha ---
+      // Polígonos Inferior Derecha
       doc.fillColor('#0B192C')
          .polygon([px(1000), py(707)], [px(890), py(707)], [px(1000), py(595)])
          .fill();
@@ -118,7 +118,7 @@ const generateCertificatePdfBuffer = (data, qrDataUrl) => {
       // -----------------------------------------------------------------------
       doc.save();
 
-      // --- Guilloche / Roseta de Seguridad Central ---
+      // Guilloche / Roseta central
       doc.save();
       doc.strokeColor('#0284C7').lineWidth(0.8).opacity(0.06);
       const cx = px(500);
@@ -138,14 +138,14 @@ const generateCertificatePdfBuffer = (data, qrDataUrl) => {
       });
       doc.restore();
 
-      // --- Marcos Perimetrales Concéntricos ---
+      // Marcos Perimetrales
       doc.lineWidth(5).strokeColor('#0A1931').rect(px(15), py(15), px(970), py(677)).stroke();
       doc.lineWidth(2).strokeColor('#FFFFFF').rect(px(22), py(22), px(956), py(663)).stroke();
       doc.lineWidth(2).strokeColor('#0284C7').rect(px(28), py(28), px(944), py(651)).stroke();
       doc.lineWidth(0.8).strokeColor('#0A1931').opacity(0.2).rect(px(35), py(35), px(930), py(637)).stroke();
       doc.opacity(1);
 
-      // --- Esquinas Biseladas Sólidas ---
+      // Esquinas Biseladas Sólidas
       doc.fillColor('#0A1931');
       doc.polygon([px(15), py(75)], [px(75), py(15)], [px(45), py(15)], [px(15), py(45)]).fill();
       doc.polygon([px(985), py(75)], [px(925), py(15)], [px(955), py(15)], [px(985), py(45)]).fill();
@@ -158,30 +158,29 @@ const generateCertificatePdfBuffer = (data, qrDataUrl) => {
       doc.polygon([px(15), py(615)], [px(92), py(692)], [px(82), py(692)], [px(15), py(625)]).fill();
       doc.polygon([px(985), py(615)], [px(908), py(692)], [px(918), py(692)], [px(985), py(625)]).fill();
 
-      // --- Circuitos perimetrales en bordes ---
+      // Circuitos perimetrales
       doc.strokeColor('#0284C7').lineWidth(1.4).lineCap('round');
-      // Sup Izq
       doc.moveTo(px(15), py(115)).lineTo(px(35), py(115)).lineTo(px(48), py(102)).lineTo(px(48), py(80)).stroke();
       doc.circle(px(48), py(80), 2).fillColor('#0284C7').fill();
       doc.moveTo(px(115), py(15)).lineTo(px(115), py(35)).lineTo(px(102), py(48)).lineTo(px(80), py(48)).stroke();
       doc.circle(px(80), py(48), 2.2).fillColor('#0284C7').fill();
-      // Sup Der
+
       doc.moveTo(px(985), py(115)).lineTo(px(965), py(115)).lineTo(px(952), py(102)).lineTo(px(952), py(80)).stroke();
       doc.circle(px(952), py(80), 2).fillColor('#0284C7').fill();
       doc.moveTo(px(885), py(15)).lineTo(px(885), py(35)).lineTo(px(898), py(48)).lineTo(px(920), py(48)).stroke();
       doc.circle(px(920), py(48), 2.2).fillColor('#0284C7').fill();
-      // Inf Izq
+
       doc.moveTo(px(15), py(592)).lineTo(px(35), py(592)).lineTo(px(48), py(605)).lineTo(px(48), py(627)).stroke();
       doc.circle(px(48), py(627), 2).fillColor('#0284C7').fill();
       doc.moveTo(px(115), py(692)).lineTo(px(115), py(672)).lineTo(px(102), py(659)).lineTo(px(80), py(659)).stroke();
       doc.circle(px(80), py(659), 2.2).fillColor('#0284C7').fill();
-      // Inf Der
+
       doc.moveTo(px(985), py(592)).lineTo(px(965), py(592)).lineTo(px(952), py(605)).lineTo(px(952), py(627)).stroke();
       doc.circle(px(952), py(627), 2).fillColor('#0284C7').fill();
       doc.moveTo(px(885), py(692)).lineTo(px(885), py(672)).lineTo(px(898), py(659)).lineTo(px(920), py(659)).stroke();
       doc.circle(px(920), py(659), 2.2).fillColor('#0284C7').fill();
 
-      // Pistas punteadas laterales
+      // Pistas laterales punteadas
       doc.save();
       doc.strokeColor('#0284C7').lineWidth(1.2).lineCap('round');
       doc.moveTo(px(10), py(300)).lineTo(px(10), py(405)).dash(5, { space: 3 }).stroke();
@@ -199,17 +198,21 @@ const generateCertificatePdfBuffer = (data, qrDataUrl) => {
     }
 
     // =========================================================================
-    // 1. CABECERA INSTITUCIONAL IDÉNTICA A LA VISTA PREVIA
+    // 1. CABECERA INSTITUCIONAL (REPOSICIONADA MÁS ABAJO)
     // =========================================================================
-    // Lado Izquierdo
-    doc.fontSize(13.5).fillColor('#0A1931').font('Helvetica-Bold')
-       .text('MATT INNOVA SOLUTION', 58, 48);
-    doc.fontSize(8.5).fillColor('#64748B').font('Courier-Bold')
-       .text('E.I.R.L. • RUC: 20608934521', 58, 64);
+    // En la Opción 2 se desplaza a X=75 para librar el triángulo decorativo; en la 1 se coloca en X=60
+    const headerLeftX = esOpcion2 ? 78 : 62;
+    const headerY = 70; // Bajado de 48 a 70 pt para no chocar arriba
 
-    // Lado Derecho: Logotipo Oficial SVG renderizado vectorialmente
-    const logoX = w - 175;
-    const logoY = 44;
+    // Lado Izquierdo: Membrete de la Empresa
+    doc.fontSize(13.5).fillColor('#0A1931').font('Helvetica-Bold')
+       .text('MATT INNOVA SOLUTION', headerLeftX, headerY);
+    doc.fontSize(8.5).fillColor('#64748B').font('Courier-Bold')
+       .text('E.I.R.L. • RUC: 20608934521', headerLeftX, headerY + 16);
+
+    // Lado Derecho: Logotipo Oficial MIS
+    const logoX = w - 190;
+    const logoY = headerY - 5;
 
     // Ícono MIS
     doc.save();
@@ -231,22 +234,21 @@ const generateCertificatePdfBuffer = (data, qrDataUrl) => {
     // 2. CUERPO DEL RECONOCIMIENTO
     // =========================================================================
     doc.fontSize(9).fillColor('#475569').font('Helvetica-Bold')
-       .text('OTORGA EL PRESENTE', 0, 122, { align: 'center', characterSpacing: 2.5 });
+       .text('OTORGA EL PRESENTE', 0, 138, { align: 'center', characterSpacing: 2.5 });
 
-    // Título Principal en Serifa
     doc.fontSize(22).fillColor('#0A1931').font('Times-Bold')
-       .text('CERTIFICADO DE RECONOCIMIENTO', 0, 144, { align: 'center', characterSpacing: 1 });
+       .text('CERTIFICADO DE RECONOCIMIENTO', 0, 158, { align: 'center', characterSpacing: 1 });
 
     doc.fontSize(9.5).fillColor('#64748B').font('Times-Italic')
-       .text('A favor de:', 0, 180, { align: 'center' });
+       .text('A favor de:', 0, 192, { align: 'center' });
 
-    // Titular en fuente cursiva / caligráfica clásica
+    // Nombre del Titular
     doc.fontSize(28).fillColor('#0A1931').font('Times-BoldItalic')
-       .text(data.nombreCompleto || data.titular, 0, 202, { align: 'center' });
+       .text(data.nombreCompleto || data.titular, 0, 212, { align: 'center' });
 
     // DNI Enmascarado
     doc.fontSize(8.5).fillColor('#475569').font('Helvetica')
-       .text('Identificado con DNI N° ', (w / 2) - 80, 240, { continued: true })
+       .text('Identificado con DNI N° ', (w / 2) - 80, 248, { continued: true })
        .font('Courier-Bold').fillColor('#0A1931')
        .text(data.dniEnmascarado || data.dni || '---');
 
@@ -259,7 +261,7 @@ const generateCertificatePdfBuffer = (data, qrDataUrl) => {
     const textoCuerpo = `Por haber culminado satisfactoriamente su periodo de ${modalidad} en el área de ${area}, ${detalle}Totalizando un récord convalidado de ${horas} horas cronológicas.`;
 
     doc.fontSize(10).fillColor('#334155').font('Helvetica')
-       .text(textoCuerpo, 105, 268, {
+       .text(textoCuerpo, 105, 274, {
          align: 'center',
          width: w - 210,
          lineGap: 4.5,
@@ -270,8 +272,7 @@ const generateCertificatePdfBuffer = (data, qrDataUrl) => {
     // =========================================================================
     const baseY = h - 138;
 
-    // --- Bloque Izquierdo: Firma y Fecha ---
-    // Línea de puntos de firma
+    // Bloque Izquierdo: Línea de puntos de firma
     doc.save();
     doc.moveTo(85, baseY + 45).lineTo(255, baseY + 45).strokeColor('#94A3B8').lineWidth(1).dash(4, { space: 3 }).stroke();
     doc.restore();
@@ -283,24 +284,21 @@ const generateCertificatePdfBuffer = (data, qrDataUrl) => {
     doc.fontSize(7.5).fillColor('#94A3B8').font('Courier')
        .text(`Fecha de Emisión: ${data.fecha_emision}`, 85, baseY + 80, { width: 170, align: 'left' });
 
-    // --- Bloque Derecho: Código QR y Sello Tech ---
+    // Bloque Derecho: Código QR y Sello Tech
     if (qrDataUrl) {
       const qrBase64 = qrDataUrl.replace(/^data:image\/png;base64,/, '');
       const qrBuffer = Buffer.from(qrBase64, 'base64');
       const qrX = w - 165;
 
-      // Recuadro QR blanco con borde suave
       doc.roundedRect(qrX - 3, baseY - 5, 74, 74, 3).fillColor('#FFFFFF').fill();
       doc.roundedRect(qrX - 3, baseY - 5, 74, 74, 3).strokeColor('#CBD5E1').lineWidth(0.8).stroke();
       doc.image(qrBuffer, qrX, baseY - 2, { width: 68, height: 68 });
 
-      // Código Oficial y leyenda
       doc.fontSize(7.5).fillColor('#334155').font('Courier-Bold')
          .text(data.codigo_oficial || 'CERT-OFICIAL', qrX - 10, baseY + 73, { width: 88, align: 'center' });
       doc.fontSize(6).fillColor('#94A3B8').font('Helvetica')
          .text('Escanee para verificar', qrX - 10, baseY + 83, { width: 88, align: 'center' });
 
-      // Badge Cápsula Celeste Tech (#0284C7)
       doc.roundedRect(qrX - 25, baseY + 94, 118, 14, 7).fillColor('#0284C7').fill();
       doc.fontSize(6.5).fillColor('#FFFFFF').font('Helvetica-Bold')
          .text('✓ VÁLIDO & FIRMADO DIGITALMENTE', qrX - 25, baseY + 98, { width: 118, align: 'center' });
