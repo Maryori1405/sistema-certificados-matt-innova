@@ -198,20 +198,19 @@ const generateCertificatePdfBuffer = (data, qrDataUrl) => {
     }
 
     // =========================================================================
-    // 1. CABECERA INSTITUCIONAL (REPOSICIONADA MÁS ABAJO)
+    // 1. CABECERA INSTITUCIONAL (DESPLAZADA MÁS ABAJO Y HACIA EL CENTRO)
     // =========================================================================
-    // En la Opción 2 se desplaza a X=75 para librar el triángulo decorativo; en la 1 se coloca en X=60
-    const headerLeftX = esOpcion2 ? 78 : 62;
-    const headerY = 70; // Bajado de 48 a 70 pt para no chocar arriba
+    const headerLeftX = esOpcion2 ? 88 : 75;
+    const headerY = 92; // Altura holgada respecto al borde superior
 
-    // Lado Izquierdo: Membrete de la Empresa
+    // Membrete Izquierdo
     doc.fontSize(13.5).fillColor('#0A1931').font('Helvetica-Bold')
        .text('MATT INNOVA SOLUTION', headerLeftX, headerY);
     doc.fontSize(8.5).fillColor('#64748B').font('Courier-Bold')
        .text('E.I.R.L. • RUC: 20608934521', headerLeftX, headerY + 16);
 
-    // Lado Derecho: Logotipo Oficial MIS
-    const logoX = w - 190;
+    // Logotipo MIS Derecho
+    const logoX = w - 200;
     const logoY = headerY - 5;
 
     // Ícono MIS
@@ -231,37 +230,37 @@ const generateCertificatePdfBuffer = (data, qrDataUrl) => {
        .text('SOLUCIONES TI QUE TRANSFORMAN', logoX - 10, logoY + 30, { width: 135, align: 'right' });
 
     // =========================================================================
-    // 2. CUERPO DEL RECONOCIMIENTO
+    // 2. CUERPO DEL RECONOCIMIENTO (RECALCULADO)
     // =========================================================================
     doc.fontSize(9).fillColor('#475569').font('Helvetica-Bold')
-       .text('OTORGA EL PRESENTE', 0, 138, { align: 'center', characterSpacing: 2.5 });
+       .text('OTORGA EL PRESENTE', 0, 150, { align: 'center', characterSpacing: 2.5 });
 
     doc.fontSize(22).fillColor('#0A1931').font('Times-Bold')
-       .text('CERTIFICADO DE RECONOCIMIENTO', 0, 158, { align: 'center', characterSpacing: 1 });
+       .text('CERTIFICADO DE RECONOCIMIENTO', 0, 170, { align: 'center', characterSpacing: 1 });
 
     doc.fontSize(9.5).fillColor('#64748B').font('Times-Italic')
-       .text('A favor de:', 0, 192, { align: 'center' });
+       .text('A favor de:', 0, 204, { align: 'center' });
 
     // Nombre del Titular
     doc.fontSize(28).fillColor('#0A1931').font('Times-BoldItalic')
-       .text(data.nombreCompleto || data.titular, 0, 212, { align: 'center' });
+       .text(data.nombreCompleto || data.titular, 0, 224, { align: 'center' });
 
     // DNI Enmascarado
     doc.fontSize(8.5).fillColor('#475569').font('Helvetica')
-       .text('Identificado con DNI N° ', (w / 2) - 80, 248, { continued: true })
+       .text('Identificado con DNI N° ', (w / 2) - 80, 258, { continued: true })
        .font('Courier-Bold').fillColor('#0A1931')
        .text(data.dniEnmascarado || data.dni || '---');
 
     // Párrafo convalidado justificado
-    const modalidad = data.modalidad || 'Prácticas Preprofesionales';
+    const modalidad = data.modalidad || 'Prácticas Profesionales';
     const area = data.area_asignada || data.area || 'Ingeniería de Sistemas';
     const detalle = data.desempeno_detalle ? `${data.desempeno_detalle} ` : 'demostrando alto compromiso ético y profesional en los proyectos asignados. ';
-    const horas = data.total_horas || 480;
+    const horas = data.total_horas || 100;
 
     const textoCuerpo = `Por haber culminado satisfactoriamente su periodo de ${modalidad} en el área de ${area}, ${detalle}Totalizando un récord convalidado de ${horas} horas cronológicas.`;
 
     doc.fontSize(10).fillColor('#334155').font('Helvetica')
-       .text(textoCuerpo, 105, 274, {
+       .text(textoCuerpo, 105, 286, {
          align: 'center',
          width: w - 210,
          lineGap: 4.5,
@@ -272,7 +271,7 @@ const generateCertificatePdfBuffer = (data, qrDataUrl) => {
     // =========================================================================
     const baseY = h - 138;
 
-    // Bloque Izquierdo: Línea de puntos de firma
+    // Línea de firma
     doc.save();
     doc.moveTo(85, baseY + 45).lineTo(255, baseY + 45).strokeColor('#94A3B8').lineWidth(1).dash(4, { space: 3 }).stroke();
     doc.restore();
@@ -284,7 +283,7 @@ const generateCertificatePdfBuffer = (data, qrDataUrl) => {
     doc.fontSize(7.5).fillColor('#94A3B8').font('Courier')
        .text(`Fecha de Emisión: ${data.fecha_emision}`, 85, baseY + 80, { width: 170, align: 'left' });
 
-    // Bloque Derecho: Código QR y Sello Tech
+    // QR y cápsula tech
     if (qrDataUrl) {
       const qrBase64 = qrDataUrl.replace(/^data:image\/png;base64,/, '');
       const qrBuffer = Buffer.from(qrBase64, 'base64');
