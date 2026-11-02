@@ -12,6 +12,6 @@ const { verifyToken, requireAdmin } = require('../middlewares/auth.middleware');
 router.get('/', verifyToken, requireAdmin, listCertificates);
 router.post('/issue', verifyToken, requireAdmin, issueCertificate);
 router.put('/:id/revoke', verifyToken, requireAdmin, revokeCertificate);
-router.get('/:id/download', downloadCertificatePdf); // Descarga pública o con token
+router.get('/:id/download', downloadCertificatePdf);
 
 module.exports = router;
