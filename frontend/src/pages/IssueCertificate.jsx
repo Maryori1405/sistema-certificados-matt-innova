@@ -58,9 +58,12 @@ export default function IssueCertificate() {
     fetchUsers();
   }, []);
 
-  // 2. Generar QR para la vista previa
+  // 2. Generar QR para la vista previa dinámico según el origen actual
   useEffect(() => {
-    const previewUrl = `https://certificados.mattinnova.com/verificar/PREVIEW-${formData.usuario_id || 'CERT'}-${formData.total_horas}`;
+    const identificador = formData.usuario_id || 'CERT-PREVIEW';
+    const baseOrigin = window.location.origin;
+    const previewUrl = `${baseOrigin}/verificar/${identificador}`;
+
     QRCode.toDataURL(previewUrl, {
       width: 140,
       margin: 1,
@@ -265,7 +268,7 @@ export default function IssueCertificate() {
           </div>
 
           <div className="bg-white rounded-xl shadow-xl border border-slate-200 p-2 sm:p-4 select-none">
-            {/* Contenedor A4: margen horizontal y vertical óptimo */}
+            {/* Contenedor A4: margen horizontal y vertical balanceado */}
             <div className="relative w-full aspect-[1.414/1] bg-white border border-slate-100 px-14 py-8 sm:px-20 sm:py-10 flex flex-col justify-between overflow-hidden">
               
               {/* RENDER VECTORIAL SEGÚN PLANTILLA SELECCIONADA */}
@@ -375,7 +378,7 @@ export default function IssueCertificate() {
                 </svg>
               )}
 
-              {/* 1. Cabecera Institucional (Bajada con pt-6 sm:pt-8 para quedar completamente limpia) */}
+              {/* 1. Cabecera Institucional */}
               <div className="relative z-10 flex justify-between items-start pt-6 sm:pt-8 px-2">
                 <div className="text-left">
                   <h1 className="text-sm sm:text-base font-black text-[#0A1931] tracking-tight font-sans">
