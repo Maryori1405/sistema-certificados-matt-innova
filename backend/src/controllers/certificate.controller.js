@@ -1,229 +1,217 @@
-// backend/src/controllers/certificate.controller.js
-const db = require('../config/db');
-const { generateCertificateHash } = require('../services/crypto.service');
-const { generateVerificationQR } = require('../services/qr.service');
+// backend/src/controllers/certificates.controller.js
+const crypto = require('crypto');
+const QRCode = require('qrcode');
+const pool = require('../database'); // Conexión a Neon PostgreSQL
 const { generateCertificatePdfBuffer } = require('../services/pdf.service');
 
-const getNextCertificateCode = async () => {
-  const currentYear = new Date().getFullYear();
-  const countResult = await db.query('SELECT COUNT(*) FROM certificados');
-  const nextNum = parseInt(countResult.rows[0].count, 10) + 1;
-  return `CERT-${currentYear}-${String(nextNum).padStart(3, '0')}`;
-};
+// URL base oficial del Frontend en Vercel
+const FRONTEND_URL = process.env.FRONTEND_URL || 'https://sistema-certificados-matt-innova.vercel.app';
 
-const issueCertificate = async (req, res) => {
-  const { usuario_id, modalidad, total_horas, fecha_emision, desempeno_detalle, plantilla_modelo } = req.body;
-
-  if (!usuario_id || !modalidad || !total_horas || !fecha_emision || !desempeno_detalle) {
-    return res.status(400).json({ message: 'Todos los campos son requeridos.' });
-  }
-
+/**
+ * 1. Listar certificados con filtros opcionales
+ */
+const getCertificates = async (req, res) => {
   try {
-    const userResult = await db.query('SELECT * FROM usuarios WHERE id = $1', [usuario_id]);
-    if (userResult.rows.length === 0) {
-      return res.status(404).json({ message: 'Colaborador no encontrado.' });
-    }
-    const targetUser = userResult.rows[0];
-
-    const codigo_oficial = await getNextCertificateCode();
-    const token_sha256 = generateCertificateHash(codigo_oficial, targetUser.dni, fecha_emision);
-    const { qrImageDataUrl } = await generateVerificationQR(token_sha256);
-
-    const insertQuery = `
-      INSERT INTO certificados 
-        (codigo_oficial, usuario_id, modalidad, total_horas, fecha_emision, plantilla_modelo, desempeno_detalle, token_sha256, qr_imagen_url, emitido_por)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
-      RETURNING *;
-    `;
-    const insertValues = [
-      codigo_oficial,
-      usuario_id,
-      modalidad,
-      parseInt(total_horas, 10),
-      fecha_emision,
-      plantilla_modelo || 'Plantilla Formal Matt Innova 2026',
-      desempeno_detalle,
-      token_sha256,
-      qrImageDataUrl,
-      req.user.id,
-    ];
-
-    const certResult = await db.query(insertQuery, insertValues);
-
-    res.status(201).json({
-      message: 'Certificado emitido exitosamente con firma SHA-256 y QR.',
-      certificate: certResult.rows[0],
-    });
-  } catch (error) {
-    console.error('Error al emitir:', error);
-    res.status(500).json({ message: 'Error interno al registrar el certificado.' });
-  }
-};
-
-const listCertificates = async (req, res) => {
-  const { estado } = req.query;
-  try {
+    const { estado } = req.query;
     let query = `
-      SELECT c.id, c.codigo_oficial, c.modalidad, c.total_horas, c.fecha_emision, 
-             c.token_sha256, c.estado, c.motivo_revocacion,
-             u.dni, CONCAT(u.nombres, ' ', u.apellidos) AS titular, u.correo_institucional
+      SELECT 
+        c.id, 
+        c.codigo_oficial, 
+        CONCAT(u.nombres, ' ', u.apellidos) AS titular, 
+        u.dni,
+        u.area_asignada,
+        c.modalidad, 
+        c.total_horas, 
+        c.fecha_emision, 
+        c.token_sha256, 
+        c.estado, 
+        c.motivo_revocacion
       FROM certificados c
-      JOIN usuarios u ON c.usuario_id = u.id
+      INNER JOIN usuarios u ON c.usuario_id = u.id
     `;
     const params = [];
 
-    if (estado && (estado === 'Vigente' || estado === 'Revocado')) {
+    if (estado && estado !== 'Todos') {
       query += ` WHERE c.estado = $1`;
       params.push(estado);
     }
-    query += ` ORDER BY c.id DESC;`;
 
-    const result = await db.query(query, params);
-    res.json(result.rows);
+    query += ` ORDER BY c.id DESC`;
+
+    const result = await pool.query(query, params);
+    return res.status(200).json({ certificates: result.rows });
   } catch (error) {
-    console.error('Error al listar:', error);
-    res.status(500).json({ message: 'Error al obtener la lista de certificados.' });
+    console.error('Error al obtener certificados:', error);
+    return res.status(500).json({ message: 'Error interno al consultar certificados.' });
   }
 };
 
-const revokeCertificate = async (req, res) => {
-  const { id } = req.params;
-  const { motivo } = req.body;
-
-  if (!motivo) {
-    return res.status(400).json({ message: 'Debe ingresar un motivo para revocar.' });
-  }
-
+/**
+ * 2. Emitir un nuevo certificado digital con Token SHA-256
+ */
+const issueCertificate = async (req, res) => {
   try {
-    const updateResult = await db.query(
-      `UPDATE certificados 
-       SET estado = 'Revocado', motivo_revocacion = $1, fecha_revocacion = CURRENT_TIMESTAMP 
-       WHERE id = $2 RETURNING *`,
-      [motivo, id]
-    );
+    const { usuario_id, modalidad, total_horas, fecha_emision, plantilla_modelo, desempeno_detalle } = req.body;
 
-    if (updateResult.rows.length === 0) {
-      return res.status(404).json({ message: 'Certificado no hallado.' });
+    if (!usuario_id) {
+      return res.status(400).json({ message: 'El usuario_id es obligatorio.' });
     }
 
-    res.json({
-      message: 'Certificado revocado exitosamente.',
-      certificate: updateResult.rows[0],
+    // Obtener datos del usuario
+    const userRes = await pool.query('SELECT * FROM usuarios WHERE id = $1', [usuario_id]);
+    if (userRes.rows.length === 0) {
+      return res.status(404).json({ message: 'Colaborador no encontrado.' });
+    }
+    const user = userRes.rows[0];
+
+    // Generar código correlativo (ej. CERT-2026-006)
+    const countRes = await pool.query('SELECT COUNT(*) FROM certificados');
+    const nextNumber = String(parseInt(countRes.rows[0].count, 10) + 1).padStart(3, '0');
+    const codigoOficial = `CERT-2026-${nextNumber}`;
+
+    // Generar Token SHA-256 único e inmutable
+    const payload = `${codigoOficial}-${user.dni}-${Date.now()}`;
+    const tokenSha256 = crypto.createHash('sha256').update(payload).digest('hex');
+
+    // Registrar en la base de datos
+    const insertQuery = `
+      INSERT INTO certificados (
+        usuario_id, codigo_oficial, modalidad, total_horas, fecha_emision, 
+        token_sha256, estado, plantilla_modelo, desempeno_detalle
+      ) VALUES ($1, $2, $3, $4, $5, $6, 'Vigente', $7, $8)
+      RETURNING *
+    `;
+    const values = [
+      usuario_id,
+      codigoOficial,
+      modalidad || 'Prácticas Preprofesionales',
+      total_horas || 480,
+      fecha_emision || new Date(),
+      tokenSha256,
+      plantilla_modelo || 'Plantilla Formal Elite',
+      desempeno_detalle || ''
+    ];
+
+    const newCert = await pool.query(insertQuery, values);
+
+    return res.status(201).json({
+      message: 'Certificado emitido con éxito.',
+      certificate: newCert.rows[0]
     });
   } catch (error) {
-    console.error('Error al revocar:', error);
-    res.status(500).json({ message: 'Error interno al revocar el documento.' });
+    console.error('Error al emitir certificado:', error);
+    return res.status(500).json({ message: 'Error interno al registrar el certificado.' });
   }
 };
 
+/**
+ * 3. Descargar Certificado en PDF Vectorial con QR a Vercel
+ */
 const downloadCertificatePdf = async (req, res) => {
-  const { id } = req.params;
-
   try {
-    const result = await db.query(
-      `SELECT c.*, u.dni, CONCAT(u.nombres, ' ', u.apellidos) AS nombre_completo, u.area_asignada
-       FROM certificados c
-       JOIN usuarios u ON c.usuario_id = u.id
-       WHERE c.id = $1`,
-      [id]
-    );
+    const { id } = req.params;
+
+    const query = `
+      SELECT 
+        c.id, 
+        c.codigo_oficial, 
+        CONCAT(u.nombres, ' ', u.apellidos) AS "nombreCompleto", 
+        u.dni,
+        u.area_asignada,
+        c.modalidad, 
+        c.total_horas, 
+        c.fecha_emision, 
+        c.token_sha256, 
+        c.estado
+      FROM certificados c
+      INNER JOIN usuarios u ON c.usuario_id = u.id
+      WHERE c.id = $1
+    `;
+    const result = await pool.query(query, [id]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'Certificado no encontrado en el sistema.' });
+    }
+
+    const cert = result.rows[0];
+
+    // Enmascarar DNI (Ley 29733)
+    const dniStr = String(cert.dni || '');
+    const dniEnmascarado = dniStr.length >= 5 
+      ? `${dniStr.substring(0, 2)}***${dniStr.substring(dniStr.length - 3)}`
+      : dniStr;
+
+    // Generar URL pública apuntando a Vercel para el código QR
+    const qrUrl = `${FRONTEND_URL}/verificar/${cert.token_sha256 || cert.codigo_oficial}`;
+    
+    // Generar buffer en base64 del código QR
+    const qrDataUrl = await QRCode.toDataURL(qrUrl, {
+      errorCorrectionLevel: 'H',
+      margin: 1,
+      width: 250,
+      color: {
+        dark: '#0A1931',
+        light: '#FFFFFF',
+      }
+    });
+
+    const pdfData = {
+      ...cert,
+      dniEnmascarado,
+      fecha_emision: cert.fecha_emision 
+        ? new Date(cert.fecha_emision).toISOString().split('T')[0] 
+        : new Date().toISOString().split('T')[0],
+    };
+
+    // Generar el binario con el diseño Monumental Formal Elite
+    const pdfBuffer = await generateCertificatePdfBuffer(pdfData, qrDataUrl);
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename=Certificado_${cert.codigo_oficial}.pdf`);
+    return res.send(pdfBuffer);
+  } catch (error) {
+    console.error('Error al generar PDF del certificado:', error);
+    return res.status(500).json({ message: 'Error interno al procesar el documento PDF.' });
+  }
+};
+
+/**
+ * 4. Revocar o Anular Certificado
+ */
+const revokeCertificate = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { motivo } = req.body;
+
+    if (!motivo) {
+      return res.status(400).json({ message: 'Debe especificar el motivo formal de revocación.' });
+    }
+
+    const updateQuery = `
+      UPDATE certificados 
+      SET estado = 'Revocado', motivo_revocacion = $1 
+      WHERE id = $2 
+      RETURNING *
+    `;
+    const result = await pool.query(updateQuery, [motivo, id]);
 
     if (result.rows.length === 0) {
       return res.status(404).json({ message: 'Certificado no encontrado.' });
     }
 
-    const cert = result.rows[0];
-    const dniRaw = cert.dni || '';
-    const dniEnmascarado = dniRaw.length >= 8 
-      ? `${dniRaw.substring(0, 2)}***${dniRaw.substring(dniRaw.length - 3)}`
-      : dniRaw;
-
-    const pdfBuffer = await generateCertificatePdfBuffer(
-      {
-        nombreCompleto: cert.nombre_completo,
-        dniEnmascarado,
-        modalidad: cert.modalidad,
-        area_asignada: cert.area_asignada,
-        total_horas: cert.total_horas,
-        codigo_oficial: cert.codigo_oficial,
-        fecha_emision: new Date(cert.fecha_emision).toLocaleDateString('es-PE'),
-      },
-      cert.qr_imagen_url
-    );
-
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `attachment; filename="${cert.codigo_oficial}.pdf"`);
-    res.send(pdfBuffer);
-  } catch (error) {
-    console.error('Error generando PDF:', error);
-    res.status(500).json({ message: 'Error al generar el archivo PDF.' });
-  }
-};
-
-// Métricas completas para el Dashboard con entrega obligatoria de token_sha256
-const getDashboardStats = async (req, res) => {
-  try {
-    // 1. Contadores generales
-    const countCert = await db.query('SELECT COUNT(*) FROM certificados');
-    const total_emitidos = parseInt(countCert.rows[0].count, 10);
-
-    const countVigentes = await db.query("SELECT COUNT(*) FROM certificados WHERE estado = 'Vigente'");
-    const certificados_vigentes = parseInt(countVigentes.rows[0].count, 10);
-
-    const countUsers = await db.query("SELECT tipo_usuario, COUNT(*) FROM usuarios WHERE tipo_usuario IN ('Practicante', 'Trabajador') GROUP BY tipo_usuario");
-    let practicantes = 0;
-    let trabajadores = 0;
-    countUsers.rows.forEach(r => {
-      if (r.tipo_usuario === 'Practicante') practicantes = parseInt(r.count, 10);
-      if (r.tipo_usuario === 'Trabajador') trabajadores = parseInt(r.count, 10);
-    });
-
-    let consultas_qr_totales = 0;
-    try {
-      const countAudit = await db.query('SELECT COUNT(*) FROM auditoria_consultas_qr');
-      consultas_qr_totales = parseInt(countAudit.rows[0].count, 10);
-    } catch (e) {
-      consultas_qr_totales = 0;
-    }
-
-    // 2. Acreditaciones recientes con inclusión explícita del token_sha256
-    const recentQuery = `
-      SELECT 
-        c.id, 
-        c.codigo_oficial, 
-        c.modalidad, 
-        c.fecha_emision, 
-        c.estado, 
-        c.token_sha256,
-        u.dni, 
-        CONCAT(u.nombres, ' ', u.apellidos) AS titular
-      FROM certificados c
-      JOIN usuarios u ON c.usuario_id = u.id
-      ORDER BY c.id DESC
-      LIMIT 5;
-    `;
-    const recentResult = await db.query(recentQuery);
-
-    res.json({
-      metricas: {
-        total_emitidos,
-        colaboradores_total: practicantes + trabajadores,
-        desglose_colaboradores: { practicantes, trabajadores },
-        certificados_vigentes,
-        consultas_qr_totales,
-      },
-      acreditaciones_recientes: recentResult.rows,
+    return res.status(200).json({
+      message: 'Certificado revocado exitosamente.',
+      certificate: result.rows[0]
     });
   } catch (error) {
-    console.error('Error al cargar dashboard stats:', error);
-    res.status(500).json({ message: 'Error interno al recopilar estadísticas del dashboard.' });
+    console.error('Error al revocar certificado:', error);
+    return res.status(500).json({ message: 'Error interno al revocar certificado.' });
   }
 };
 
 module.exports = {
+  getCertificates,
   issueCertificate,
-  listCertificates,
-  revokeCertificate,
   downloadCertificatePdf,
-  getDashboardStats,
+  revokeCertificate,
 };
