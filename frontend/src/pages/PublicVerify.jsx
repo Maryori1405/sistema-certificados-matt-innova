@@ -1,11 +1,13 @@
 // frontend/src/pages/PublicVerify.jsx
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { CheckCircle2, XCircle, ArrowLeft, Download, ShieldCheck, AlertCircle } from 'lucide-react';
+import { CheckCircle2, XCircle, ArrowLeft, Download, ShieldCheck } from 'lucide-react';
 import axiosClient from '../api/axiosClient';
 
 export default function PublicVerify() {
-  const { token } = useParams();
+  const params = useParams();
+  // Acepta cualquier nombre de parámetro definido en App.jsx (:token, :codigo, :id o el primer valor disponible)
+  const token = params.token || params.codigo || params.hash || Object.values(params)[0];
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
@@ -23,10 +25,15 @@ export default function PublicVerify() {
 
       try {
         setLoading(true);
-        // Consulta pública al backend
+        // Consulta pública al backend en Render
         const res = await axiosClient.get(`/public/verify/${token}`);
-        setCert(res.data.certificado);
-        setIsValid(res.data.valido);
+        
+        // Maneja diferentes estructuras de respuesta comunes del backend
+        const certData = res.data?.certificado || res.data?.certificate || res.data?.data || null;
+        const validStatus = res.data?.valido ?? (certData?.estado === 'Vigente');
+
+        setCert(certData);
+        setIsValid(Boolean(validStatus && certData?.estado !== 'Revocado'));
       } catch (err) {
         console.error('Error al validar certificado:', err);
         setIsValid(false);
@@ -56,7 +63,7 @@ export default function PublicVerify() {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `Certificado-${cert.codigo_oficial}.pdf`;
+      a.download = `Certificado-${cert.codigo_oficial || cert.id}.pdf`;
       document.body.appendChild(a);
       a.click();
       a.remove();

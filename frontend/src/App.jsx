@@ -24,7 +24,7 @@ export default function App() {
 
         {/* Portales Públicos (Consulta DNI y Escaneo QR SHA-256) */}
         <Route path="/portal-practicante" element={<StudentPortal />} />
-        <Route path="/verificar/:codigo" element={<PublicVerify />} />
+        <Route path="/verificar/:token" element={<PublicVerify />} />
 
         {/* Panel Administrativo Protegido */}
         <Route path="/admin/dashboard" element={<AppLayout><Dashboard /></AppLayout>} />
