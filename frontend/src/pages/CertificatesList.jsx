@@ -1,6 +1,6 @@
 // frontend/src/pages/CertificatesList.jsx
 import React, { useState, useEffect } from 'react';
-import { Download, AlertTriangle, ExternalLink, QrCode } from 'lucide-react';
+import { Download, AlertTriangle, QrCode, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import axiosClient from '../api/axiosClient';
 
@@ -9,6 +9,7 @@ export default function CertificatesList() {
   const [filterState, setFilterState] = useState('Todos');
   const [certs, setCerts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [downloadingId, setDownloadingId] = useState(null);
 
   const fetchCertificates = async () => {
     setLoading(true);
@@ -28,6 +29,30 @@ export default function CertificatesList() {
   useEffect(() => {
     fetchCertificates();
   }, [filterState]);
+
+  const handleDownloadPdf = async (certificateId, codigoOficial) => {
+    setDownloadingId(certificateId);
+    try {
+      const response = await axiosClient.get(`/certificates/${certificateId}/download`, {
+        responseType: 'blob',
+      });
+
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.setAttribute('download', `Certificado_${codigoOficial || certificateId}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(downloadUrl);
+    } catch (error) {
+      console.error('Error al descargar el PDF:', error);
+      alert(error.response?.data?.message || 'No se pudo generar o descargar el PDF del servidor.');
+    } finally {
+      setDownloadingId(null);
+    }
+  };
 
   const handleRevoke = async (id) => {
     const motivo = prompt('Ingrese el motivo formal de anulación/revocación:');
@@ -121,10 +146,10 @@ export default function CertificatesList() {
                   </td>
                   <td className="py-3.5 px-4 text-right">
                     <div className="flex items-center justify-end space-x-2">
-                      {/* Enlace para simular verificación dentro de la misma aplicación */}
+                      {/* Enlace de comprobación pública */}
                       <button
                         onClick={() => navigate(`/verificar/${item.token_sha256 || item.codigo_oficial}`)}
-                        className="text-slate-600 hover:text-blue-600 bg-slate-50 hover:bg-slate-100 border border-slate-200 px-2 py-1 rounded font-medium inline-flex items-center space-x-1 transition"
+                        className="text-slate-600 hover:text-blue-600 bg-slate-50 hover:bg-slate-100 border border-slate-200 px-2 py-1 rounded font-medium inline-flex items-center space-x-1 transition cursor-pointer"
                         title="Ver comprobación pública"
                       >
                         <QrCode className="w-3.5 h-3.5" />
@@ -133,18 +158,26 @@ export default function CertificatesList() {
 
                       {item.estado === 'Vigente' ? (
                         <>
-                          <a
-                            href={`http://localhost:5000/api/certificates/${item.id}/download`}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="text-slate-700 bg-slate-100 hover:bg-slate-200 px-2.5 py-1 rounded font-medium inline-flex items-center space-x-1 transition"
+                          <button
+                            onClick={() => handleDownloadPdf(item.id, item.codigo_oficial)}
+                            disabled={downloadingId === item.id}
+                            className="text-slate-700 bg-slate-100 hover:bg-slate-200 px-2.5 py-1 rounded font-medium inline-flex items-center space-x-1 transition disabled:opacity-50 cursor-pointer"
                           >
-                            <Download className="w-3.5 h-3.5" />
-                            <span>Descargar PDF</span>
-                          </a>
+                            {downloadingId === item.id ? (
+                              <>
+                                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                <span>Descargando...</span>
+                              </>
+                            ) : (
+                              <>
+                                <Download className="w-3.5 h-3.5" />
+                                <span>Descargar PDF</span>
+                              </>
+                            )}
+                          </button>
                           <button
                             onClick={() => handleRevoke(item.id)}
-                            className="text-rose-600 hover:text-rose-800 bg-rose-50 hover:bg-rose-100 border border-rose-100 px-2.5 py-1 rounded font-medium transition"
+                            className="text-rose-600 hover:text-rose-800 bg-rose-50 hover:bg-rose-100 border border-rose-100 px-2.5 py-1 rounded font-medium transition cursor-pointer"
                           >
                             Revocar
                           </button>
@@ -152,7 +185,7 @@ export default function CertificatesList() {
                       ) : (
                         <button 
                           onClick={() => alert(`Motivo de anulación formal:\n${item.motivo_revocacion || 'Sin motivo especificado'}`)}
-                          className="text-slate-600 bg-slate-100 hover:bg-slate-200 px-2.5 py-1 rounded font-medium transition"
+                          className="text-slate-600 bg-slate-100 hover:bg-slate-200 px-2.5 py-1 rounded font-medium transition cursor-pointer"
                         >
                           Ver Motivo Anulación
                         </button>
@@ -171,7 +204,7 @@ export default function CertificatesList() {
           <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
           <span>Toda revocación inhabilita de inmediato el acceso al estado verde en el escaneo móvil por código QR.</span>
         </span>
-        <span>Servidor en Producción: VPS Cloud</span>
+        <span>Servidor en Producción: Render Cloud</span>
       </div>
     </div>
   );
