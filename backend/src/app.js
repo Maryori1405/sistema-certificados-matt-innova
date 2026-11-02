@@ -17,6 +17,18 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // ==========================================
+// Ruta base de estado y bienvenida
+// ==========================================
+app.get('/', (req, res) => {
+  res.status(200).json({
+    sistema: 'API de Certificados Digitales - Matt Innova Solution E.I.R.L.',
+    estado: 'Servidor backend activo y operativo',
+    ambiente: process.env.NODE_ENV || 'development',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// ==========================================
 // Montaje de rutas modulares
 // ==========================================
 
