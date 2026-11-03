@@ -81,7 +81,7 @@ export default function QrValidations() {
           <button
             onClick={fetchAuditLogs}
             disabled={loading}
-            className="p-2 border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-50 transition"
+            className="p-2 border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-50 transition cursor-pointer"
             title="Actualizar registro"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-blue-600' : ''}`} />
@@ -126,7 +126,7 @@ export default function QrValidations() {
         <div className="flex space-x-1.5 bg-slate-100 p-1 rounded-lg">
           <button
             onClick={() => setStatusFilter('todos')}
-            className={`px-3 py-1 rounded-md text-xs font-semibold transition ${
+            className={`px-3 py-1 rounded-md text-xs font-semibold transition cursor-pointer ${
               statusFilter === 'todos' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
@@ -134,7 +134,7 @@ export default function QrValidations() {
           </button>
           <button
             onClick={() => setStatusFilter('vigentes')}
-            className={`px-3 py-1 rounded-md text-xs font-semibold transition ${
+            className={`px-3 py-1 rounded-md text-xs font-semibold transition cursor-pointer ${
               statusFilter === 'vigentes' ? 'bg-white text-emerald-700 shadow-xs' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
@@ -142,7 +142,7 @@ export default function QrValidations() {
           </button>
           <button
             onClick={() => setStatusFilter('revocados')}
-            className={`px-3 py-1 rounded-md text-xs font-semibold transition ${
+            className={`px-3 py-1 rounded-md text-xs font-semibold transition cursor-pointer ${
               statusFilter === 'revocados' ? 'bg-white text-rose-700 shadow-xs' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
