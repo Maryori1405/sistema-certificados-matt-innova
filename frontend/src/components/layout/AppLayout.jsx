@@ -21,11 +21,16 @@ export default function AppLayout({ children }) {
     navigate('/login');
   };
 
-  const navItems = [
+  const navItemsPrincipal = [
     { label: 'Panel de Control', path: '/admin/dashboard', icon: LayoutDashboard },
     { label: 'Colaboradores', path: '/admin/colaboradores', icon: Users, badge: '82' },
     { label: 'Emitir Certificado', path: '/admin/emitir', icon: PlusCircle },
     { label: 'Lista de Certificados', path: '/admin/certificados', icon: FileText },
+  ];
+
+  const navItemsSistema = [
+    { label: 'Validaciones QR', path: '/admin/validaciones-qr', icon: QrCode, hasStatusDot: true },
+    { label: 'Configuración', path: '/admin/configuracion', icon: Settings },
   ];
 
   return (
@@ -49,11 +54,12 @@ export default function AppLayout({ children }) {
 
           {/* Menú */}
           <div className="px-3 py-4">
+            {/* Sección: Gestión Principal */}
             <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider px-3 mb-2 block">
               Gestión Principal
             </span>
             <nav className="space-y-1">
-              {navItems.map((item) => {
+              {navItemsPrincipal.map((item) => {
                 const Icon = item.icon;
                 return (
                   <NavLink
@@ -81,28 +87,36 @@ export default function AppLayout({ children }) {
               })}
             </nav>
 
+            {/* Sección: Sistema y Auditoría */}
             <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider px-3 mt-6 mb-2 block">
               Sistema y Auditoría
             </span>
-            <div className="space-y-1">
-              <button 
-                onClick={() => navigate('/admin/validaciones-qr')}
-                className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 transition-all text-left"
-              >
-                <div className="flex items-center space-x-3">
-                  <QrCode className="w-4 h-4 text-slate-400" />
-                  <span>Validaciones QR</span>
-                </div>
-                <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-              </button>
-              <button 
-                onClick={() => navigate('/admin/configuracion')}
-                className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 transition-all text-left"
-              >
-                <Settings className="w-4 h-4 text-slate-400" />
-                <span>Configuración</span>
-              </button>
-            </div>
+            <nav className="space-y-1">
+              {navItemsSistema.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <NavLink
+                    key={item.path}
+                    to={item.path}
+                    className={({ isActive }) =>
+                      `flex items-center justify-between px-3 py-2.5 rounded-lg text-xs font-medium transition-all ${
+                        isActive
+                          ? 'bg-[#1E56FF] text-white font-semibold shadow-sm'
+                          : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                      }`
+                    }
+                  >
+                    <div className="flex items-center space-x-3">
+                      <Icon className="w-4 h-4" />
+                      <span>{item.label}</span>
+                    </div>
+                    {item.hasStatusDot && (
+                      <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    )}
+                  </NavLink>
+                );
+              })}
+            </nav>
           </div>
         </div>
 
