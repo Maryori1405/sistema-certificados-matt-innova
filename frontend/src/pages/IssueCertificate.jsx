@@ -58,9 +58,9 @@ export default function IssueCertificate() {
     fetchUsers();
   }, []);
 
-  // 2. Generar QR para la vista previa dinámico según el origen actual
+  // 2. Generar QR para la vista previa dinámico
   useEffect(() => {
-    const identificador = formData.usuario_id || 'CERT-PREVIEW';
+    const identificador = formData.usuario_id || 'CERT-2026-LIVE';
     const baseOrigin = window.location.origin;
     const previewUrl = `${baseOrigin}/verificar/${identificador}`;
 
@@ -121,6 +121,8 @@ export default function IssueCertificate() {
       setLoading(false);
     }
   };
+
+  const esOpcion2 = formData.plantilla_modelo.includes('Geométrica') || formData.plantilla_modelo.includes('2');
 
   return (
     <div className="space-y-6">
@@ -225,7 +227,7 @@ export default function IssueCertificate() {
                 className="w-full p-2.5 rounded-lg border border-slate-200 bg-slate-50 font-medium focus:outline-none focus:border-blue-500"
               >
                 <option value="Plantilla Formal Elite (Borde Monumental + Guilloche + Circuitos)">
-                  Opción 1: Formal Elite (Borde Monumental + Guilloche + Circuitos)
+                  Opción 1: Formal Elite (Borde Monumental + Circuitos)
                 </option>
                 <option value="Plantilla Geométrica Tech (Polígonos + Red de Nodos)">
                   Opción 2: Geométrica Tech (Polígonos + Red de Nodos)
@@ -251,9 +253,6 @@ export default function IssueCertificate() {
               <Award className="w-4 h-4" />
               <span>{loading ? 'Generando...' : 'Emitir Certificado y Generar QR'}</span>
             </button>
-            <p className="text-[10px] text-slate-400 text-center">
-              Se registrará automáticamente en la base de datos de producción
-            </p>
           </form>
         </div>
 
@@ -268,72 +267,58 @@ export default function IssueCertificate() {
           </div>
 
           <div className="bg-white rounded-xl shadow-xl border border-slate-200 p-2 sm:p-4 select-none">
-            {/* Contenedor A4: margen horizontal y vertical balanceado */}
-            <div className="relative w-full aspect-[1.414/1] bg-white border border-slate-100 px-14 py-8 sm:px-20 sm:py-10 flex flex-col justify-between overflow-hidden">
+            <div className="relative w-full aspect-[1.414/1] bg-white border border-slate-100 flex flex-col justify-between overflow-hidden px-8 py-6 sm:px-12 sm:py-8">
               
-              {/* RENDER VECTORIAL SEGÚN PLANTILLA SELECCIONADA */}
-              {formData.plantilla_modelo === 'Plantilla Geométrica Tech (Polígonos + Red de Nodos)' ? (
-                /* OPCIÓN 2: GEOMÉTRICA TECH */
+              {/* RENDER MARCO SEGÚN PLANTILLA */}
+              {esOpcion2 ? (
+                /* OPCIÓN 2: GEOMÉTRICA TECH (IMAGEN 2) */
                 <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 1000 707" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <rect x="15" y="15" width="970" height="677" rx="2" stroke="#008DDA" strokeWidth="1" strokeOpacity="0.3" />
+                  {/* Marco perimetral fino */}
+                  <rect x="20" y="20" width="960" height="667" stroke="#008DDA" strokeWidth="1" strokeOpacity="0.35" />
+
+                  {/* Esquina Superior Izquierda */}
+                  <path d="M0 0 L150 0 L0 150 Z" fill="#0B192C" />
+                  <path d="M0 150 L150 0 L170 0 L0 170 Z" fill="#008DDA" />
                   
-                  {/* Polígonos Superior Izquierda */}
-                  <path d="M0 0 L115 0 L0 115 Z" fill="#0B192C" />
-                  <path d="M0 115 L115 0 L135 0 L0 135 Z" fill="#008DDA" />
-                  <path d="M0 135 L135 0 L145 0 L0 145 Z" fill="#41C9E2" fillOpacity="0.8" />
-                  
-                  {/* Barras laterales */}
-                  <g opacity="0.3" fill="#008DDA">
-                    <rect x="10" y="210" width="3" height="20" rx="1.5" />
-                    <rect x="18" y="195" width="3" height="35" rx="1.5" />
-                    <rect x="26" y="180" width="3" height="55" rx="1.5" />
+                  {/* Esquina Superior Derecha */}
+                  <path d="M1000 0 L850 0 L1000 150 Z" fill="#0B192C" />
+                  <path d="M1000 150 L850 0 L830 0 L1000 170 Z" fill="#008DDA" />
+
+                  {/* Esquina Inferior Izquierda */}
+                  <path d="M0 707 L0 557 L150 707 Z" fill="#0B192C" />
+                  <path d="M0 557 L150 707 L170 707 L0 537 Z" fill="#008DDA" />
+
+                  {/* Esquina Inferior Derecha */}
+                  <path d="M1000 707 L1000 557 L850 707 Z" fill="#0B192C" />
+                  <path d="M1000 557 L850 707 L830 707 L1000 537 Z" fill="#008DDA" />
+
+                  {/* Barras verticales izquierdas */}
+                  <g fill="#008DDA" opacity="0.4">
+                    <rect x="45" y="320" width="3" height="45" rx="1.5" />
+                    <rect x="52" y="300" width="3" height="65" rx="1.5" />
+                    <rect x="59" y="335" width="3" height="30" rx="1.5" />
                   </g>
 
-                  {/* Red de nodos */}
-                  <g opacity="0.3" stroke="#008DDA" strokeWidth="1">
-                    <line x1="30" y1="580" x2="65" y2="540" />
-                    <line x1="65" y1="540" x2="100" y2="565" />
-                    <circle cx="30" cy="580" r="2.5" fill="#008DDA" />
-                    <circle cx="65" cy="540" r="2.5" fill="#008DDA" />
-                    <circle cx="100" cy="565" r="2.5" fill="#008DDA" />
+                  {/* Red de nodos inferior izquierda */}
+                  <g stroke="#008DDA" strokeWidth="1.2" opacity="0.45" fill="none">
+                    <line x1="55" y1="550" x2="115" y2="520" />
+                    <line x1="115" y1="520" x2="125" y2="540" />
+                    <line x1="55" y1="550" x2="85" y2="570" />
+                    <line x1="85" y1="570" x2="125" y2="540" />
+                    <circle cx="55" cy="550" r="3" fill="#008DDA" />
+                    <circle cx="115" cy="520" r="3" fill="#008DDA" />
+                    <circle cx="125" cy="540" r="3" fill="#008DDA" />
+                    <circle cx="85" cy="570" r="3" fill="#008DDA" />
                   </g>
-
-                  {/* Polígonos Inferior Izquierda */}
-                  <path d="M0 707 L0 580 L95 707 Z" fill="#0B192C" />
-                  <path d="M0 707 L95 707 L190 707 L0 645 Z" fill="#008DDA" />
-
-                  {/* Circuitos superior derecha */}
-                  <path d="M890 0 L940 50 L1000 50" stroke="#008DDA" strokeWidth="1.8" strokeLinecap="round" />
-                  <circle cx="890" cy="0" r="2.5" fill="#008DDA" />
-                  <circle cx="1000" cy="50" r="2.5" fill="#008DDA" />
-
-                  {/* Polígonos Superior Derecha */}
-                  <path d="M1000 0 L885 0 L1000 115 Z" fill="#0B192C" />
-                  <path d="M1000 115 L885 0 L870 0 L1000 130 Z" fill="#008DDA" />
-                  
-                  {/* Polígono Inferior Derecha */}
-                  <path d="M1000 707 L890 707 L1000 595 Z" fill="#0B192C" />
-                  <path d="M1000 707 L865 707 L1000 570 Z" fill="#008DDA" fillOpacity="0.4" />
                 </svg>
               ) : (
-                /* OPCIÓN 1: FORMAL ELITE MONUMENTAL CON GUILLOCHE */
+                /* OPCIÓN 1: FORMAL ELITE MONUMENTAL (IMAGEN 1) */
                 <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 1000 707" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  {/* Guilloche / Roseta Ondulada de Seguridad */}
-                  <g opacity="0.05" stroke="#0284C7" strokeWidth="0.8" fill="none">
-                    <circle cx="500" cy="375" r="140" strokeDasharray="4 2" />
-                    <circle cx="500" cy="375" r="170" />
-                    <circle cx="500" cy="375" r="200" strokeDasharray="8 4" />
-                    <ellipse cx="500" cy="375" rx="240" ry="150" transform="rotate(15 500 375)" />
-                    <ellipse cx="500" cy="375" rx="240" ry="150" transform="rotate(-15 500 375)" />
-                    <ellipse cx="500" cy="375" rx="240" ry="150" transform="rotate(45 500 375)" />
-                    <ellipse cx="500" cy="375" rx="240" ry="150" transform="rotate(-45 500 375)" />
-                  </g>
-
                   {/* Marcos Perimetrales */}
-                  <rect x="15" y="15" width="970" height="677" rx="3" stroke="#0A1931" strokeWidth="6" />
+                  <rect x="15" y="15" width="970" height="677" rx="3" stroke="#0A1931" strokeWidth="5.5" />
                   <rect x="22" y="22" width="956" height="663" rx="2" stroke="#FFFFFF" strokeWidth="2.5" />
-                  <rect x="28" y="28" width="944" height="651" rx="2" stroke="#0284C7" strokeWidth="2.5" />
-                  <rect x="35" y="35" width="930" height="637" rx="2" stroke="#0A1931" strokeWidth="1" strokeOpacity="0.2" />
+                  <rect x="27" y="27" width="946" height="653" rx="2" stroke="#0284C7" strokeWidth="2" />
+                  <rect x="33" y="33" width="934" height="641" rx="2" stroke="#0A1931" strokeWidth="0.8" strokeOpacity="0.25" />
 
                   {/* Esquinas Biseladas Sólidas */}
                   <path d="M15 75 L75 15 L45 15 L15 45 Z" fill="#0A1931" />
@@ -345,7 +330,7 @@ export default function IssueCertificate() {
                   <path d="M985 632 L925 692 L955 692 L985 662 Z" fill="#0A1931" />
                   <path d="M985 615 L908 692 L918 692 L985 625 Z" fill="#0284C7" />
 
-                  {/* Circuitos perimetrales estrictamente pegados al borde */}
+                  {/* Circuitos perimetrales en esquinas */}
                   <path d="M15 115 L35 115 L48 102 L48 80" stroke="#0284C7" strokeWidth="1.5" strokeLinecap="round" />
                   <circle cx="48" cy="80" r="2" fill="#0284C7" />
                   <path d="M115 15 L115 35 L102 48 L80 48" stroke="#0284C7" strokeWidth="1.5" strokeLinecap="round" />
@@ -366,7 +351,7 @@ export default function IssueCertificate() {
                   <path d="M885 692 L885 672 L898 659 L920 659" stroke="#0284C7" strokeWidth="1.5" strokeLinecap="round" />
                   <circle cx="920" cy="659" r="2" fill="#0284C7" />
 
-                  {/* Pistas Centrales Laterales del marco */}
+                  {/* Pistas Centrales Laterales punteadas */}
                   <g stroke="#0284C7" strokeWidth="1.2" strokeLinecap="round">
                     <line x1="10" y1="300" x2="10" y2="405" strokeDasharray="5 3" />
                     <circle cx="10" cy="295" r="2" fill="#0284C7" />
@@ -378,35 +363,23 @@ export default function IssueCertificate() {
                 </svg>
               )}
 
-              {/* 1. Cabecera Institucional */}
-              <div className="relative z-10 flex justify-between items-center pt-5 sm:pt-6 px-2">
-                <div className="text-left">
-                  <h1 className="text-sm sm:text-base font-black text-[#0A1931] tracking-tight font-sans">
-                    MATT INNOVA SOLUTION
-                  </h1>
-                  <p className="text-[9px] sm:text-[10px] font-semibold text-slate-500 font-mono">
-                    E.I.R.L. • RUC: 20608934521
-                  </p>
-                </div>
-
-                {/* Logotipo Oficial en Imagen Real */}
-                <div className="flex items-center justify-end">
-                  <img 
-                    src="/logo.png" 
-                    alt="Logo Matt Innova Solution" 
-                    className="h-9 sm:h-11 w-auto max-w-[150px] object-contain filter drop-shadow-sm" 
-                  />
-                </div>
+              {/* 1. Cabecera con Logo Centrado */}
+              <div className="relative z-10 flex flex-col items-center justify-center pt-2">
+                <img 
+                  src="/logo.png" 
+                  alt="Logo Matt Innova Solution" 
+                  className="h-16 sm:h-20 w-auto max-w-[280px] object-contain drop-shadow-sm" 
+                />
               </div>
 
               {/* 2. Cuerpo del Reconocimiento */}
-              <div className="relative z-10 text-center my-auto space-y-2 px-2">
+              <div className="relative z-10 text-center my-auto space-y-2 px-4">
                 <p className="text-[9px] sm:text-[10px] font-bold text-slate-600 tracking-[0.25em] uppercase font-sans">
                   OTORGA EL PRESENTE
                 </p>
 
                 <h2 
-                  className="text-lg sm:text-2xl font-extrabold text-[#0A1931] tracking-wide uppercase"
+                  className="text-lg sm:text-2xl font-black text-[#0A1931] tracking-wider uppercase"
                   style={{ fontFamily: "'Cinzel', 'Times New Roman', serif" }}
                 >
                   CERTIFICADO DE RECONOCIMIENTO
@@ -416,7 +389,7 @@ export default function IssueCertificate() {
                   A favor de:
                 </p>
 
-                <div className="py-0.5">
+                <div className="py-1">
                   <span 
                     className="text-2xl sm:text-4xl text-[#0A1931]"
                     style={{ fontFamily: "'Great Vibes', 'Alex Brush', cursive" }}
@@ -429,7 +402,7 @@ export default function IssueCertificate() {
                   Identificado con DNI N° <span className="font-mono font-semibold">{formData.dniEnmascarado || '89***588'}</span>
                 </p>
 
-                <div className="max-w-lg mx-auto pt-1">
+                <div className="max-w-xl mx-auto pt-1">
                   <p className="text-[9.5px] sm:text-[11px] text-slate-700 leading-relaxed">
                     Por haber culminado satisfactoriamente su periodo de{' '}
                     <strong className="text-slate-900 font-bold">{formData.modalidad}</strong> en el área de{' '}
@@ -440,11 +413,11 @@ export default function IssueCertificate() {
                 </div>
               </div>
 
-              {/* 3. Pie de Página (Firma, Fecha y QR) */}
-              <div className="relative z-10 flex justify-between items-end pb-1 px-2">
-                {/* Bloque Izquierdo: Firma centrada respecto a su línea + Fecha a la izquierda */}
+              {/* 3. Pie de Página */}
+              <div className="relative z-10 flex justify-between items-end pb-2 px-4 sm:px-6">
+                {/* Firma y Fecha */}
                 <div className="flex flex-col items-start space-y-1">
-                  <div className="w-44 sm:w-48 flex flex-col items-center text-center">
+                  <div className="w-44 sm:w-52 flex flex-col items-center text-center">
                     <div className="w-full border-b border-dashed border-slate-400 mb-1"></div>
                     <p className="text-[9.5px] sm:text-[10px] font-bold text-slate-900 leading-tight">
                       Ing. Representante Legal
@@ -453,12 +426,12 @@ export default function IssueCertificate() {
                       Matt Innova Solution E.I.R.L.
                     </p>
                   </div>
-                  <p className="text-[7.5px] sm:text-[8px] text-slate-400 font-mono text-left pt-0.5">
+                  <p className="text-[7.5px] sm:text-[8px] text-slate-400 font-mono text-left pt-1">
                     Fecha de Emisión: {formData.fecha_emision}
                   </p>
                 </div>
 
-                {/* Bloque Derecho: Código QR y Sello Estilo Tech */}
+                {/* QR y Badge */}
                 <div className="flex flex-col items-center space-y-1">
                   <div className="bg-white p-0.5 rounded border border-slate-300 shadow-xs">
                     {qrPreview ? (
@@ -472,8 +445,8 @@ export default function IssueCertificate() {
                     <p className="text-[6.5px] text-slate-400">Escanee para verificar</p>
                   </div>
 
-                  {/* Badge Cápsula Celeste Tech */}
-                  <div className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-[#0284C7] text-white text-[7.5px] sm:text-[8px] font-bold shadow-xs">
+                  {/* Píldora Celeste Tech */}
+                  <div className="inline-flex items-center space-x-1 px-3 py-0.5 rounded-full bg-[#0284C7] text-white text-[7.5px] sm:text-[8px] font-bold shadow-xs">
                     <ShieldCheck className="w-3 h-3 text-white" />
                     <span>✓ VÁLIDO & FIRMADO DIGITALMENTE</span>
                   </div>
