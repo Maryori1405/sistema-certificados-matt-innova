@@ -43,12 +43,18 @@ export default function Login() {
   return (
     <div className="min-h-screen bg-slate-100 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-xl border border-slate-200/80 p-8 max-w-sm w-full space-y-5">
+        {/* Cabecera con Logotipo Oficial */}
         <div className="flex flex-col items-center text-center">
-          <div className="w-12 h-12 rounded-xl bg-blue-600 text-white font-extrabold flex items-center justify-center text-xl shadow-md">
-            M
+          <div className="w-full flex items-center justify-center mb-1">
+            <img 
+              src="/logo.png" 
+              alt="Matt Innova Solution" 
+              className="w-auto max-w-[200px] max-h-16 object-contain filter drop-shadow-sm mx-auto" 
+            />
           </div>
-          <h2 className="text-sm font-bold text-slate-900 mt-3 tracking-wide">MATT INNOVA SOLUTION</h2>
-          <p className="text-[10px] text-blue-600 font-semibold uppercase tracking-wider">Sistema de Certificados Digitales</p>
+          <p className="text-[10px] font-mono text-blue-600 font-bold uppercase tracking-wider mt-1">
+            Sistema de Certificados Digitales
+          </p>
           <h1 className="text-lg font-bold text-slate-800 mt-4">Bienvenido de nuevo</h1>
           <p className="text-xs text-slate-400">Ingresa tus credenciales para acceder al panel administrativo</p>
         </div>
