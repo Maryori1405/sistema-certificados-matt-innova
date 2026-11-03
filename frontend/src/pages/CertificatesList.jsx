@@ -1,13 +1,10 @@
 // frontend/src/pages/CertificateList.jsx
 import React, { useState, useEffect } from 'react';
 import { 
-  FileText, 
-  Download, 
   QrCode, 
-  AlertTriangle, 
+  Download, 
   X, 
-  CheckCircle2, 
-  RefreshCw 
+  AlertTriangle 
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import axiosClient from '../api/axiosClient';
@@ -47,7 +44,7 @@ export default function CertificateList() {
     fetchCertificates();
   }, []);
 
-  // Abrir el modal de revocación
+  // Abrir modal de revocación
   const handleOpenRevoke = (cert) => {
     setSelectedCert(cert);
     setReasonOption('Error en los datos del titular (nombre o DNI)');
@@ -55,7 +52,7 @@ export default function CertificateList() {
     setShowRevokeModal(true);
   };
 
-  // Confirmar la revocación
+  // Confirmar revocación
   const handleConfirmRevoke = async (e) => {
     e.preventDefault();
     if (!selectedCert) return;
@@ -109,42 +106,48 @@ export default function CertificateList() {
   });
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200/80 shadow-xs p-6 space-y-6">
-      {/* Cabecera */}
+    <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-8 space-y-6">
+      {/* Cabecera idéntica a la Imagen 2 */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-base font-bold text-slate-900">
+          <h2 className="text-lg font-bold text-slate-900 tracking-tight">
             Repositorio Central de Certificados Emitidos
           </h2>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-xs text-slate-500 mt-1">
             Historial completo con opción de descarga de duplicados o anulación de documentos
           </p>
         </div>
 
-        {/* Filtros de Estado */}
-        <div className="flex items-center space-x-2 text-xs">
+        {/* Filtros de Estado con diseño exacto */}
+        <div className="flex items-center space-x-3 text-xs">
           <span className="text-slate-500 font-medium">Filtrar estado:</span>
-          <div className="flex space-x-1 bg-slate-100 p-1 rounded-lg">
+          <div className="flex items-center space-x-1">
             <button
               onClick={() => setStatusFilter('todos')}
-              className={`px-3 py-1 rounded-md text-xs font-semibold transition cursor-pointer ${
-                statusFilter === 'todos' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
+              className={`px-4 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer ${
+                statusFilter === 'todos' 
+                  ? 'bg-[#1E56FF] text-white shadow-xs' 
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               Todos
             </button>
             <button
               onClick={() => setStatusFilter('vigentes')}
-              className={`px-3 py-1 rounded-md text-xs font-semibold transition cursor-pointer ${
-                statusFilter === 'vigentes' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer ${
+                statusFilter === 'vigentes' 
+                  ? 'bg-[#1E56FF] text-white shadow-xs' 
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               Vigentes
             </button>
             <button
               onClick={() => setStatusFilter('revocados')}
-              className={`px-3 py-1 rounded-md text-xs font-semibold transition cursor-pointer ${
-                statusFilter === 'revocados' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer ${
+                statusFilter === 'revocados' 
+                  ? 'bg-[#1E56FF] text-white shadow-xs' 
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               Revocados
@@ -153,24 +156,24 @@ export default function CertificateList() {
         </div>
       </div>
 
-      {/* Tabla de Certificados */}
+      {/* Tabla con tipografía y estilo visual de la Imagen 2 */}
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse text-xs">
           <thead>
-            <tr className="border-b border-slate-200 text-[10px] font-bold text-slate-400 uppercase tracking-wider bg-slate-50/50">
-              <th className="py-3 px-4">Código Oficial</th>
-              <th className="py-3 px-4">Titular del Certificado</th>
-              <th className="py-3 px-4">Tipo / Modalidad</th>
-              <th className="py-3 px-4">Fecha Emisión</th>
-              <th className="py-3 px-4">Token QR SHA-256</th>
-              <th className="py-3 px-4">Estado</th>
-              <th className="py-3 px-4 text-right">Acciones Administrativas</th>
+            <tr className="border-b border-slate-100 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+              <th className="py-4 px-3 font-semibold">CÓDIGO OFICIAL</th>
+              <th className="py-4 px-3 font-semibold">TITULAR DEL CERTIFICADO</th>
+              <th className="py-4 px-3 font-semibold">TIPO / MODALIDAD</th>
+              <th className="py-4 px-3 font-semibold">FECHA EMISIÓN</th>
+              <th className="py-4 px-3 font-semibold">TOKEN QR SHA-256</th>
+              <th className="py-4 px-3 font-semibold text-center">ESTADO</th>
+              <th className="py-4 px-3 font-semibold text-right">ACCIONES ADMINISTRATIVAS</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100 text-slate-700">
             {loading ? (
               <tr>
-                <td colSpan="7" className="py-8 text-center text-slate-400 text-xs">
+                <td colSpan="7" className="py-12 text-center text-slate-400">
                   <div className="flex items-center justify-center space-x-2">
                     <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
                     <span>Cargando certificados...</span>
@@ -179,48 +182,53 @@ export default function CertificateList() {
               </tr>
             ) : filteredCerts.length === 0 ? (
               <tr>
-                <td colSpan="7" className="py-8 text-center text-slate-400 text-xs">
+                <td colSpan="7" className="py-12 text-center text-slate-400">
                   No se encontraron certificados registrados.
                 </td>
               </tr>
             ) : (
               filteredCerts.map((cert) => (
-                <tr key={cert.id} className="hover:bg-slate-50/50 transition-colors">
-                  <td className="py-3.5 px-4 font-bold text-blue-600 font-mono">
+                <tr key={cert.id} className="hover:bg-slate-50/60 transition-colors">
+                  {/* Código azul con fuente monospace idéntico a la imagen */}
+                  <td className="py-4 px-3 font-mono font-medium text-[#1E56FF]">
                     {cert.codigo_oficial}
                   </td>
-                  <td className="py-3.5 px-4 font-semibold text-slate-800">
+                  <td className="py-4 px-3 font-medium text-slate-900">
                     {cert.titular}
                   </td>
-                  <td className="py-3.5 px-4 text-slate-600">
+                  <td className="py-4 px-3 text-slate-600">
                     {cert.modalidad}
                   </td>
-                  <td className="py-3.5 px-4 text-slate-500 font-mono">
+                  <td className="py-4 px-3 text-slate-600 font-mono">
                     {cert.fecha_emision ? new Date(cert.fecha_emision).toLocaleDateString('es-PE') : '---'}
                   </td>
-                  <td className="py-3.5 px-4 font-mono text-[11px] text-slate-500">
-                    <span className="bg-slate-100 px-2 py-0.5 rounded border border-slate-200 text-slate-600">
-                      {cert.token_sha256 ? `${cert.token_sha256.substring(0, 8)}...${cert.token_sha256.substring(cert.token_sha256.length - 6)}` : '---'}
+                  {/* Token estilizado en caja gris suave */}
+                  <td className="py-4 px-3 font-mono text-[11px]">
+                    <span className="bg-[#F8FAFC] border border-slate-200/60 px-2 py-1 rounded text-slate-600">
+                      {cert.token_sha256 
+                        ? `${cert.token_sha256.substring(0, 8)}...${cert.token_sha256.substring(cert.token_sha256.length - 6)}` 
+                        : '---'}
                     </span>
                   </td>
-                  <td className="py-3.5 px-4">
-                    <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border inline-flex items-center space-x-1 ${
+                  {/* Cápsula de estado idéntica a la imagen */}
+                  <td className="py-4 px-3 text-center">
+                    <span className={`inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-[11px] font-medium border ${
                       cert.estado === 'Vigente'
-                        ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                        : 'bg-rose-50 text-rose-700 border-rose-200'
+                        ? 'bg-[#ECFDF5] text-[#059669] border-[#A7F3D0]'
+                        : 'bg-[#FEF2F2] text-[#DC2626] border-[#FECACA]'
                     }`}>
-                      <span className={`w-1.5 h-1.5 rounded-full ${cert.estado === 'Vigente' ? 'bg-emerald-500' : 'bg-rose-500'}`}></span>
+                      <span className={`w-1.5 h-1.5 rounded-full ${cert.estado === 'Vigente' ? 'bg-[#10B981]' : 'bg-[#EF4444]'}`}></span>
                       <span>{cert.estado}</span>
                     </span>
                   </td>
-                  <td className="py-3.5 px-4 text-right">
-                    <div className="flex items-center justify-end space-x-3">
+                  {/* Acciones administrativas idénticas */}
+                  <td className="py-4 px-3 text-right">
+                    <div className="flex items-center justify-end space-x-4 text-xs">
                       <button
                         onClick={() => navigate(`/verificar/${cert.token_sha256 || cert.codigo_oficial}`)}
-                        className="text-slate-600 hover:text-blue-600 inline-flex items-center space-x-1 cursor-pointer"
-                        title="Ver validación QR"
+                        className="text-slate-600 hover:text-slate-900 inline-flex items-center space-x-1.5 cursor-pointer"
                       >
-                        <QrCode className="w-3.5 h-3.5" />
+                        <QrCode className="w-3.5 h-3.5 text-slate-500" />
                         <span>Ver QR</span>
                       </button>
 
@@ -228,14 +236,14 @@ export default function CertificateList() {
                         <>
                           <button
                             onClick={() => handleDownloadPdf(cert.id, cert.codigo_oficial)}
-                            className="text-slate-600 hover:text-blue-600 inline-flex items-center space-x-1 cursor-pointer"
+                            className="text-slate-600 hover:text-slate-900 inline-flex items-center space-x-1.5 cursor-pointer"
                           >
-                            <Download className="w-3.5 h-3.5" />
+                            <Download className="w-3.5 h-3.5 text-slate-500" />
                             <span>Descargar PDF</span>
                           </button>
                           <button
                             onClick={() => handleOpenRevoke(cert)}
-                            className="text-rose-600 hover:text-rose-800 font-semibold cursor-pointer"
+                            className="text-[#DC2626] hover:text-red-700 font-medium cursor-pointer"
                           >
                             Revocar
                           </button>
@@ -246,7 +254,7 @@ export default function CertificateList() {
                             setCurrentReason(cert.motivo_revocacion || 'Sin motivo especificado al momento de la anulación.');
                             setViewReasonModal(true);
                           }}
-                          className="text-slate-500 hover:text-slate-700 underline cursor-pointer"
+                          className="text-slate-500 hover:text-slate-800 underline cursor-pointer"
                         >
                           Ver Motivo Anulación
                         </button>
@@ -260,10 +268,10 @@ export default function CertificateList() {
         </table>
       </div>
 
-      {/* MODAL DE REVOCACIÓN CON LISTA DESPLEGABLE Y OPCIÓN "OTRO" */}
+      {/* MODAL DE REVOCACIÓN (REEMPLAZA EL PROMPT NATIVO) */}
       {showRevokeModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4 animate-fadeIn">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div className="flex items-center space-x-2 text-rose-600">
                 <AlertTriangle className="w-5 h-5" />
@@ -277,8 +285,8 @@ export default function CertificateList() {
               </button>
             </div>
 
-            <div className="bg-rose-50 border border-rose-200 p-3 rounded-lg text-xs text-rose-800">
-              Vas a revocar el certificado oficial <strong className="font-mono">{selectedCert?.codigo_oficial}</strong> perteneciente a <strong>{selectedCert?.titular}</strong>.
+            <div className="bg-rose-50 border border-rose-200/70 p-3 rounded-xl text-xs text-rose-800 leading-relaxed">
+              Vas a anular el certificado <strong className="font-mono">{selectedCert?.codigo_oficial}</strong> de <strong>{selectedCert?.titular}</strong>. Esta acción quedará registrada en auditoría pública.
             </div>
 
             <form onSubmit={handleConfirmRevoke} className="space-y-4 text-xs">
@@ -289,7 +297,7 @@ export default function CertificateList() {
                 <select
                   value={reasonOption}
                   onChange={(e) => setReasonOption(e.target.value)}
-                  className="w-full p-2.5 rounded-lg border border-slate-300 bg-slate-50 font-medium focus:outline-none focus:border-blue-500 focus:bg-white transition"
+                  className="w-full p-2.5 rounded-lg border border-slate-200 bg-slate-50 font-medium text-slate-800 focus:outline-none focus:border-blue-500 focus:bg-white transition"
                 >
                   <option value="Error en los datos del titular (nombre o DNI)">
                     Error en los datos del titular (nombre o DNI)
@@ -312,7 +320,7 @@ export default function CertificateList() {
                 </select>
               </div>
 
-              {/* Si seleccionó "Otro", se habilita el textarea para redactar el motivo */}
+              {/* Si seleccionó "Otro", se habilita el textarea para escribir el motivo */}
               {reasonOption === 'Otro' && (
                 <div>
                   <label className="block font-semibold text-slate-700 mb-1">
@@ -324,7 +332,7 @@ export default function CertificateList() {
                     value={customReason}
                     onChange={(e) => setCustomReason(e.target.value)}
                     placeholder="Escribe aquí el motivo específico por el cual se revoca el documento..."
-                    className="w-full p-2.5 rounded-lg border border-slate-300 focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500 text-slate-700"
+                    className="w-full p-2.5 rounded-lg border border-slate-200 focus:outline-none focus:border-rose-500 text-slate-700"
                   />
                 </div>
               )}
@@ -350,10 +358,10 @@ export default function CertificateList() {
         </div>
       )}
 
-      {/* MODAL PARA VER EL MOTIVO DE ANULACIÓN REGISTRADO */}
+      {/* MODAL PARA VER MOTIVO DE ANULACIÓN */}
       {viewReasonModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl border border-slate-200 space-y-3">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl border border-slate-100 space-y-3">
             <div className="flex items-center justify-between pb-2 border-b border-slate-100">
               <h3 className="font-bold text-xs text-slate-800 uppercase tracking-wider">
                 Motivo de Revocación Registrado
