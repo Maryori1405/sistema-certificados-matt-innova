@@ -33,16 +33,16 @@ export default function AppLayout({ children }) {
       {/* Sidebar Lateral */}
       <aside className="w-64 bg-[#0C1322] flex flex-col justify-between text-slate-300 border-r border-slate-800 shrink-0">
         <div>
-          {/* Logo Empresa */}
-          <div className="p-6 flex items-center space-x-3 border-b border-slate-800/60">
-            <div className="w-10 h-10 bg-[#1E56FF] rounded-xl flex items-center justify-center font-bold text-white text-xl shadow-md shadow-blue-900/40">
-              M
-            </div>
-            <div>
-              <h1 className="text-sm font-bold text-white tracking-wide uppercase leading-tight">Matt Innova</h1>
-              <p className="text-[10px] text-slate-400 tracking-wider">SOLUTION E.I.R.L.</p>
-              <span className="text-[9px] text-blue-400 uppercase tracking-widest font-semibold block mt-0.5">Sistema de Certificados</span>
-            </div>
+          {/* Logo Empresa Oficial */}
+          <div className="p-5 flex flex-col items-center justify-center border-b border-slate-800/60">
+            <img 
+              src="/logo.png" 
+              alt="Matt Innova Solution" 
+              className="w-full max-w-[170px] h-auto max-h-12 object-contain filter drop-shadow" 
+            />
+            <span className="text-[9px] font-mono tracking-widest text-blue-400 font-bold uppercase mt-2">
+              Sistema de Certificados
+            </span>
           </div>
 
           {/* Menú */}
