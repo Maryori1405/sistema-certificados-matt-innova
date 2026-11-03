@@ -379,7 +379,7 @@ export default function IssueCertificate() {
               )}
 
               {/* 1. Cabecera Institucional */}
-              <div className="relative z-10 flex justify-between items-start pt-6 sm:pt-8 px-2">
+              <div className="relative z-10 flex justify-between items-center pt-5 sm:pt-6 px-2">
                 <div className="text-left">
                   <h1 className="text-sm sm:text-base font-black text-[#0A1931] tracking-tight font-sans">
                     MATT INNOVA SOLUTION
@@ -389,26 +389,13 @@ export default function IssueCertificate() {
                   </p>
                 </div>
 
-                {/* Logotipo Oficial */}
-                <div className="flex flex-col items-center">
-                  <div className="flex items-center space-x-1.5">
-                    <svg className="w-7 h-7 sm:w-8 sm:h-8" viewBox="0 0 100 100" fill="none">
-                      <circle cx="50" cy="50" r="22" stroke="#0284C7" strokeWidth="6" strokeDasharray="9 4" />
-                      <path d="M22 50 C26 38, 40 38, 50 44 C60 38, 74 38, 78 50 C70 54, 60 50, 50 56 C40 50, 30 54, 22 50 Z" fill="#38BDF8" fillOpacity="0.4" stroke="#0284C7" strokeWidth="2" />
-                      <text x="50" y="55" textAnchor="middle" fill="#0284C7" fontSize="13" fontWeight="900" fontFamily="sans-serif">mis</text>
-                    </svg>
-                    <div className="text-left">
-                      <div className="text-xs sm:text-sm font-black text-[#0284C7] leading-none tracking-tight">
-                        MATT INNOVA
-                      </div>
-                      <div className="text-[7.5px] font-extrabold text-[#0A1931] tracking-widest leading-none mt-0.5">
-                        SOLUTION
-                      </div>
-                    </div>
-                  </div>
-                  <span className="text-[6px] font-bold text-slate-400 tracking-wider mt-0.5">
-                    SOLUCIONES TI QUE TRANSFORMAN
-                  </span>
+                {/* Logotipo Oficial en Imagen Real */}
+                <div className="flex items-center justify-end">
+                  <img 
+                    src="/logo.png" 
+                    alt="Logo Matt Innova Solution" 
+                    className="h-9 sm:h-11 w-auto max-w-[150px] object-contain filter drop-shadow-sm" 
+                  />
                 </div>
               </div>
 
