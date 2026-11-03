@@ -79,24 +79,26 @@ export default function StudentPortal() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 flex flex-col justify-between font-sans">
-      {/* Barra de Navegación Superior */}
-      <header className="bg-white border-b border-slate-200 px-6 py-4 flex justify-between items-center shadow-sm">
-        <div className="flex items-center space-x-3">
-          <div className="w-9 h-9 rounded-xl bg-blue-600 text-white font-extrabold flex items-center justify-center text-base shadow-sm">
-            M
-          </div>
-          <div>
-            <h1 className="text-sm font-bold text-slate-900 leading-tight">
-              Matt Innova Solution • Portal del Practicante
+      {/* Barra de Navegación Superior con Logo Oficial */}
+      <header className="bg-white border-b border-slate-200 px-6 py-3.5 flex justify-between items-center shadow-xs">
+        <div className="flex items-center space-x-4">
+          <img 
+            src="/logo.png" 
+            alt="Matt Innova Solution" 
+            className="h-9 sm:h-11 w-auto max-w-[190px] object-contain filter drop-shadow-xs" 
+          />
+          <div className="border-l border-slate-200 pl-4 hidden sm:block">
+            <h1 className="text-xs sm:text-sm font-bold text-slate-800 leading-tight">
+              Portal del Practicante
             </h1>
-            <p className="text-[11px] text-slate-500">
+            <p className="text-[10px] sm:text-xs text-slate-400">
               Consulta y descarga directa de constancias oficiales
             </p>
           </div>
         </div>
         <button
           onClick={() => navigate('/login')}
-          className="text-xs font-semibold text-slate-600 hover:text-blue-600 flex items-center space-x-1 px-3 py-1.5 border border-slate-200 rounded-lg hover:bg-slate-50 transition"
+          className="text-xs font-semibold text-slate-600 hover:text-blue-600 flex items-center space-x-1 px-3 py-1.5 border border-slate-200 rounded-lg hover:bg-slate-50 transition cursor-pointer"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
           <span>Volver al Login</span>
@@ -121,7 +123,7 @@ export default function StudentPortal() {
         </div>
 
         {/* Formulario de Búsqueda de DNI */}
-        <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-3">
+        <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-xs space-y-3">
           <h3 className="text-xs font-bold uppercase text-slate-500 tracking-wider">
             Ingresa tu documento para visualizar tus constancias
           </h3>
@@ -139,7 +141,7 @@ export default function StudentPortal() {
             <button
               type="submit"
               disabled={loading}
-              className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-6 py-2.5 rounded-lg flex items-center justify-center space-x-2 transition shadow-sm disabled:opacity-50"
+              className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-6 py-2.5 rounded-lg flex items-center justify-center space-x-2 transition shadow-xs disabled:opacity-50 cursor-pointer"
             >
               <Search className="w-4 h-4" />
               <span>{loading ? 'Consultando...' : 'Consultar Constancias'}</span>
@@ -156,7 +158,7 @@ export default function StudentPortal() {
 
         {/* Sección de Resultados */}
         {studentData && (
-          <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-5 animate-fadeIn">
+          <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-xs space-y-5 animate-fadeIn">
             {/* Cabecera del Titular */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-100 gap-3">
               <div>
@@ -217,11 +219,11 @@ export default function StudentPortal() {
                         </div>
                         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500">
                           <span className="flex items-center space-x-1">
-                            <Clock className="w-3 h-3 text-slate-400" />
+                            <Clock className="w-3.5 h-3.5 text-slate-400" />
                             <span>Total: <strong className="text-slate-700">{cert.total_horas} horas acumuladas</strong></span>
                           </span>
                           <span className="flex items-center space-x-1">
-                            <Calendar className="w-3 h-3 text-slate-400" />
+                            <Calendar className="w-3.5 h-3.5 text-slate-400" />
                             <span>Emisión: {cert.fecha_emision}</span>
                           </span>
                           <span>
@@ -234,14 +236,14 @@ export default function StudentPortal() {
                     <div className="flex items-center space-x-2 shrink-0">
                       <button
                         onClick={() => handleDownloadPdf(cert.id, cert.codigo_oficial)}
-                        className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3.5 py-2 rounded-lg flex items-center space-x-1.5 shadow-sm transition"
+                        className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3.5 py-2 rounded-lg flex items-center space-x-1.5 shadow-xs transition cursor-pointer"
                       >
                         <Download className="w-3.5 h-3.5" />
                         <span>Descargar PDF</span>
                       </button>
                       <button
                         onClick={() => navigate(`/verificar/${cert.token_sha256}`)}
-                        className="text-xs font-semibold text-slate-600 hover:text-blue-600 px-3 py-2 border border-slate-200 rounded-lg hover:bg-white transition flex items-center space-x-1"
+                        className="text-xs font-semibold text-slate-600 hover:text-blue-600 px-3 py-2 border border-slate-200 rounded-lg hover:bg-white transition flex items-center space-x-1 cursor-pointer"
                       >
                         <span>Ver cómo valida el Reclutador</span>
                         <ExternalLink className="w-3 h-3 ml-0.5" />
