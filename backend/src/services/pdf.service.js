@@ -203,7 +203,7 @@ const generateCertificatePdfBuffer = (data, qrDataUrl) => {
     }
 
     // =========================================================================
-    // 1. CABECERA INSTITUCIONAL CON LOGO ESCALADO REAL
+    // 1. CABECERA INSTITUCIONAL CON LOGO ESCALADO EN CONTENEDOR
     // =========================================================================
     const headerLeftX = esOpcion2 ? 84 : 70;
     const headerY = 80;
@@ -214,20 +214,22 @@ const generateCertificatePdfBuffer = (data, qrDataUrl) => {
     doc.fontSize(8.5).fillColor('#64748B').font('Courier-Bold')
        .text('E.I.R.L. • RUC: 20608934521', headerLeftX, headerY + 16);
 
-    // Lado Derecho: Renderizado del Logo Oficial compensando márgenes transparentes
-    const logoAncho = 340; 
-    const logoX = w - logoAncho - 55;
-    const logoY = headerY - 110;
+    // Lado Derecho: Renderizado del Logo Oficial en contenedor proporcional
+    const logoContenedorAncho = 145;
+    const logoContenedorAlto = 52;
+    const logoX = w - logoContenedorAncho - 55;
+    const logoY = headerY - 10;
 
     if (fs.existsSync(logoPath)) {
       doc.image(logoPath, logoX, logoY, {
-        width: logoAncho,
+        fit: [logoContenedorAncho, logoContenedorAlto],
         align: 'right',
+        valign: 'center',
       });
     } else {
-      doc.fontSize(14).fillColor('#0284C7').font('Helvetica-Bold')
+      doc.fontSize(13).fillColor('#0284C7').font('Helvetica-Bold')
          .text('MATT INNOVA', w - 195, headerY, { align: 'right', width: 140 });
-      doc.fontSize(8.5).fillColor('#0A1931').font('Helvetica-Bold')
+      doc.fontSize(8).fillColor('#0A1931').font('Helvetica-Bold')
          .text('SOLUTION', w - 195, headerY + 16, { align: 'right', width: 140, characterSpacing: 1.5 });
     }
 
