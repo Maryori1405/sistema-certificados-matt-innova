@@ -203,7 +203,7 @@ const generateCertificatePdfBuffer = (data, qrDataUrl) => {
     }
 
     // =========================================================================
-    // 1. CABECERA INSTITUCIONAL CON LOGO OFICIAL AMPLIO
+    // 1. CABECERA INSTITUCIONAL CON LOGO ESCALADO REAL
     // =========================================================================
     const headerLeftX = esOpcion2 ? 84 : 70;
     const headerY = 80;
@@ -214,20 +214,21 @@ const generateCertificatePdfBuffer = (data, qrDataUrl) => {
     doc.fontSize(8.5).fillColor('#64748B').font('Courier-Bold')
        .text('E.I.R.L. • RUC: 20608934521', headerLeftX, headerY + 16);
 
-    // Lado Derecho: Renderizado del Logo Oficial ampliado a escala completa
-    const logoX = w - 245;
-    const logoY = headerY - 14;
+    // Lado Derecho: Renderizado del Logo Oficial compensando márgenes transparentes
+    const logoAncho = 340; 
+    const logoX = w - logoAncho - 55;
+    const logoY = headerY - 110;
 
     if (fs.existsSync(logoPath)) {
       doc.image(logoPath, logoX, logoY, {
-        width: 175,
+        width: logoAncho,
         align: 'right',
       });
     } else {
       doc.fontSize(14).fillColor('#0284C7').font('Helvetica-Bold')
-         .text('MATT INNOVA', logoX, logoY + 4, { align: 'right', width: 175 });
+         .text('MATT INNOVA', w - 195, headerY, { align: 'right', width: 140 });
       doc.fontSize(8.5).fillColor('#0A1931').font('Helvetica-Bold')
-         .text('SOLUTION', logoX, logoY + 20, { align: 'right', width: 175, characterSpacing: 1.5 });
+         .text('SOLUTION', w - 195, headerY + 16, { align: 'right', width: 140, characterSpacing: 1.5 });
     }
 
     // =========================================================================
