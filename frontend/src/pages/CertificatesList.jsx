@@ -1,4 +1,3 @@
-// frontend/src/pages/CertificateList.jsx
 import React, { useState, useEffect } from 'react';
 import { 
   QrCode, 
@@ -44,7 +43,6 @@ export default function CertificateList() {
     fetchCertificates();
   }, []);
 
-  // Abrir modal de revocación
   const handleOpenRevoke = (cert) => {
     setSelectedCert(cert);
     setReasonOption('Error en los datos del titular (nombre o DNI)');
@@ -52,7 +50,6 @@ export default function CertificateList() {
     setShowRevokeModal(true);
   };
 
-  // Confirmar revocación
   const handleConfirmRevoke = async (e) => {
     e.preventDefault();
     if (!selectedCert) return;
@@ -80,7 +77,6 @@ export default function CertificateList() {
     }
   };
 
-  // Descarga del PDF
   const handleDownloadPdf = async (certId, codigo) => {
     try {
       const res = await axiosClient.get(`/certificates/${certId}/download`, { responseType: 'blob' });
@@ -106,129 +102,119 @@ export default function CertificateList() {
   });
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-8 space-y-6">
-      {/* Cabecera idéntica a la Imagen 2 */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="space-y-4">
+      {/* Cabecera y Filtros exactamente con la estructura de tu captura */}
+      <div className="flex justify-between items-start">
         <div>
-          <h2 className="text-lg font-bold text-slate-900 tracking-tight">
+          <h2 className="text-sm font-bold text-slate-800">
             Repositorio Central de Certificados Emitidos
           </h2>
-          <p className="text-xs text-slate-500 mt-1">
+          <p className="text-[11px] text-slate-400">
             Historial completo con opción de descarga de duplicados o anulación de documentos
           </p>
         </div>
 
-        {/* Filtros de Estado con diseño exacto */}
-        <div className="flex items-center space-x-3 text-xs">
-          <span className="text-slate-500 font-medium">Filtrar estado:</span>
-          <div className="flex items-center space-x-1">
-            <button
-              onClick={() => setStatusFilter('todos')}
-              className={`px-4 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer ${
-                statusFilter === 'todos' 
-                  ? 'bg-[#1E56FF] text-white shadow-xs' 
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              Todos
-            </button>
-            <button
-              onClick={() => setStatusFilter('vigentes')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer ${
-                statusFilter === 'vigentes' 
-                  ? 'bg-[#1E56FF] text-white shadow-xs' 
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              Vigentes
-            </button>
-            <button
-              onClick={() => setStatusFilter('revocados')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer ${
-                statusFilter === 'revocados' 
-                  ? 'bg-[#1E56FF] text-white shadow-xs' 
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              Revocados
-            </button>
-          </div>
+        <div className="flex items-center space-x-2 text-xs">
+          <span className="text-slate-500 text-[11px]">Filtrar estado:</span>
+          <button
+            onClick={() => setStatusFilter('todos')}
+            className={`px-3 py-1 rounded text-xs font-medium transition cursor-pointer ${
+              statusFilter === 'todos'
+                ? 'bg-blue-600 text-white'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            Todos
+          </button>
+          <button
+            onClick={() => setStatusFilter('vigentes')}
+            className={`px-3 py-1 rounded text-xs font-medium transition cursor-pointer ${
+              statusFilter === 'vigentes'
+                ? 'bg-blue-600 text-white'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            Vigentes
+          </button>
+          <button
+            onClick={() => setStatusFilter('revocados')}
+            className={`px-3 py-1 rounded text-xs font-medium transition cursor-pointer ${
+              statusFilter === 'revocados'
+                ? 'bg-blue-600 text-white'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            Revocados
+          </button>
         </div>
       </div>
 
-      {/* Tabla con tipografía y estilo visual de la Imagen 2 */}
-      <div className="overflow-x-auto">
-        <table className="w-full text-left border-collapse text-xs">
+      {/* Tabla con el estilo original exacto */}
+      <div className="w-full overflow-x-auto">
+        <table className="w-full text-left border-collapse text-[11px]">
           <thead>
-            <tr className="border-b border-slate-100 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-              <th className="py-4 px-3 font-semibold">CÓDIGO OFICIAL</th>
-              <th className="py-4 px-3 font-semibold">TITULAR DEL CERTIFICADO</th>
-              <th className="py-4 px-3 font-semibold">TIPO / MODALIDAD</th>
-              <th className="py-4 px-3 font-semibold">FECHA EMISIÓN</th>
-              <th className="py-4 px-3 font-semibold">TOKEN QR SHA-256</th>
-              <th className="py-4 px-3 font-semibold text-center">ESTADO</th>
-              <th className="py-4 px-3 font-semibold text-right">ACCIONES ADMINISTRATIVAS</th>
+            <tr className="border-b border-slate-100 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
+              <th className="py-2.5 px-2">CÓDIGO OFICIAL</th>
+              <th className="py-2.5 px-2">TITULAR DEL CERTIFICADO</th>
+              <th className="py-2.5 px-2">TIPO / MODALIDAD</th>
+              <th className="py-2.5 px-2">FECHA EMISIÓN</th>
+              <th className="py-2.5 px-2">TOKEN QR SHA-256</th>
+              <th className="py-2.5 px-2">ESTADO</th>
+              <th className="py-2.5 px-2 text-right">ACCIONES ADMINISTRATIVAS</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 text-slate-700">
+          <tbody className="divide-y divide-slate-50 text-slate-700">
             {loading ? (
               <tr>
-                <td colSpan="7" className="py-12 text-center text-slate-400">
-                  <div className="flex items-center justify-center space-x-2">
-                    <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                    <span>Cargando certificados...</span>
-                  </div>
+                <td colSpan="7" className="py-8 text-center text-slate-400">
+                  Cargando certificados...
                 </td>
               </tr>
             ) : filteredCerts.length === 0 ? (
               <tr>
-                <td colSpan="7" className="py-12 text-center text-slate-400">
+                <td colSpan="7" className="py-8 text-center text-slate-400">
                   No se encontraron certificados registrados.
                 </td>
               </tr>
             ) : (
               filteredCerts.map((cert) => (
-                <tr key={cert.id} className="hover:bg-slate-50/60 transition-colors">
-                  {/* Código azul con fuente monospace idéntico a la imagen */}
-                  <td className="py-4 px-3 font-mono font-medium text-[#1E56FF]">
+                <tr key={cert.id} className="hover:bg-slate-50/50">
+                  <td className="py-3 px-2 font-mono text-blue-600">
                     {cert.codigo_oficial}
                   </td>
-                  <td className="py-4 px-3 font-medium text-slate-900">
+                  <td className="py-3 px-2 font-medium text-slate-800">
                     {cert.titular}
                   </td>
-                  <td className="py-4 px-3 text-slate-600">
+                  <td className="py-3 px-2 text-slate-600">
                     {cert.modalidad}
                   </td>
-                  <td className="py-4 px-3 text-slate-600 font-mono">
+                  <td className="py-3 px-2 text-slate-500 font-mono">
                     {cert.fecha_emision ? new Date(cert.fecha_emision).toLocaleDateString('es-PE') : '---'}
                   </td>
-                  {/* Token estilizado en caja gris suave */}
-                  <td className="py-4 px-3 font-mono text-[11px]">
-                    <span className="bg-[#F8FAFC] border border-slate-200/60 px-2 py-1 rounded text-slate-600">
+                  <td className="py-3 px-2 font-mono text-[10px] text-slate-500">
+                    <span className="bg-slate-50 border border-slate-200/60 px-1.5 py-0.5 rounded">
                       {cert.token_sha256 
                         ? `${cert.token_sha256.substring(0, 8)}...${cert.token_sha256.substring(cert.token_sha256.length - 6)}` 
                         : '---'}
                     </span>
                   </td>
-                  {/* Cápsula de estado idéntica a la imagen */}
-                  <td className="py-4 px-3 text-center">
-                    <span className={`inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-[11px] font-medium border ${
+                  <td className="py-3 px-2">
+                    <span className={`inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] border ${
                       cert.estado === 'Vigente'
-                        ? 'bg-[#ECFDF5] text-[#059669] border-[#A7F3D0]'
-                        : 'bg-[#FEF2F2] text-[#DC2626] border-[#FECACA]'
+                        ? 'bg-emerald-50 text-emerald-600 border-emerald-200'
+                        : 'bg-rose-50 text-rose-600 border-rose-200'
                     }`}>
-                      <span className={`w-1.5 h-1.5 rounded-full ${cert.estado === 'Vigente' ? 'bg-[#10B981]' : 'bg-[#EF4444]'}`}></span>
+                      <span className={`w-1.5 h-1.5 rounded-full ${cert.estado === 'Vigente' ? 'bg-emerald-500' : 'bg-rose-500'}`}></span>
                       <span>{cert.estado}</span>
                     </span>
                   </td>
-                  {/* Acciones administrativas idénticas */}
-                  <td className="py-4 px-3 text-right">
-                    <div className="flex items-center justify-end space-x-4 text-xs">
+                  <td className="py-3 px-2 text-right">
+                    <div className="flex items-center justify-end space-x-3">
                       <button
                         onClick={() => navigate(`/verificar/${cert.token_sha256 || cert.codigo_oficial}`)}
-                        className="text-slate-600 hover:text-slate-900 inline-flex items-center space-x-1.5 cursor-pointer"
+                        className="text-slate-600 hover:text-slate-900 inline-flex items-center space-x-1 cursor-pointer"
                       >
-                        <QrCode className="w-3.5 h-3.5 text-slate-500" />
+                        <QrCode className="w-3 h-3 text-slate-400" />
                         <span>Ver QR</span>
                       </button>
 
@@ -236,14 +222,14 @@ export default function CertificateList() {
                         <>
                           <button
                             onClick={() => handleDownloadPdf(cert.id, cert.codigo_oficial)}
-                            className="text-slate-600 hover:text-slate-900 inline-flex items-center space-x-1.5 cursor-pointer"
+                            className="text-slate-600 hover:text-slate-900 inline-flex items-center space-x-1 cursor-pointer"
                           >
-                            <Download className="w-3.5 h-3.5 text-slate-500" />
+                            <Download className="w-3 h-3 text-slate-400" />
                             <span>Descargar PDF</span>
                           </button>
                           <button
                             onClick={() => handleOpenRevoke(cert)}
-                            className="text-[#DC2626] hover:text-red-700 font-medium cursor-pointer"
+                            className="text-rose-500 hover:text-rose-700 cursor-pointer"
                           >
                             Revocar
                           </button>
@@ -251,10 +237,10 @@ export default function CertificateList() {
                       ) : (
                         <button
                           onClick={() => {
-                            setCurrentReason(cert.motivo_revocacion || 'Sin motivo especificado al momento de la anulación.');
+                            setCurrentReason(cert.motivo_revocacion || 'Sin motivo especificado.');
                             setViewReasonModal(true);
                           }}
-                          className="text-slate-500 hover:text-slate-800 underline cursor-pointer"
+                          className="text-slate-400 hover:text-slate-600 underline cursor-pointer"
                         >
                           Ver Motivo Anulación
                         </button>
@@ -268,36 +254,36 @@ export default function CertificateList() {
         </table>
       </div>
 
-      {/* MODAL DE REVOCACIÓN (REEMPLAZA EL PROMPT NATIVO) */}
+      {/* MODAL DE REVOCACIÓN CON SELECCIÓN DE MOTIVOS Y CAMPO "OTRO" */}
       {showRevokeModal && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl max-w-sm w-full p-5 shadow-2xl border border-slate-200 space-y-3.5">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-100">
               <div className="flex items-center space-x-2 text-rose-600">
-                <AlertTriangle className="w-5 h-5" />
-                <h3 className="font-bold text-sm text-slate-900">Anular / Revocar Certificado</h3>
+                <AlertTriangle className="w-4 h-4" />
+                <h3 className="font-bold text-xs text-slate-900">Anular / Revocar Certificado</h3>
               </div>
               <button 
                 onClick={() => setShowRevokeModal(false)}
-                className="text-slate-400 hover:text-slate-600 p-1 rounded-lg"
+                className="text-slate-400 hover:text-slate-600"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="bg-rose-50 border border-rose-200/70 p-3 rounded-xl text-xs text-rose-800 leading-relaxed">
-              Vas a anular el certificado <strong className="font-mono">{selectedCert?.codigo_oficial}</strong> de <strong>{selectedCert?.titular}</strong>. Esta acción quedará registrada en auditoría pública.
-            </div>
+            <p className="text-[11px] text-slate-600">
+              Vas a revocar el certificado <strong className="font-mono">{selectedCert?.codigo_oficial}</strong> de <strong>{selectedCert?.titular}</strong>.
+            </p>
 
-            <form onSubmit={handleConfirmRevoke} className="space-y-4 text-xs">
+            <form onSubmit={handleConfirmRevoke} className="space-y-3 text-xs">
               <div>
-                <label className="block font-semibold text-slate-700 mb-1.5">
-                  Selecciona el motivo formal de anulación:
+                <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                  Motivo formal de anulación:
                 </label>
                 <select
                   value={reasonOption}
                   onChange={(e) => setReasonOption(e.target.value)}
-                  className="w-full p-2.5 rounded-lg border border-slate-200 bg-slate-50 font-medium text-slate-800 focus:outline-none focus:border-blue-500 focus:bg-white transition"
+                  className="w-full p-2 rounded-lg border border-slate-300 bg-slate-50 text-[11px] text-slate-800 focus:outline-none focus:border-blue-500"
                 >
                   <option value="Error en los datos del titular (nombre o DNI)">
                     Error en los datos del titular (nombre o DNI)
@@ -320,19 +306,18 @@ export default function CertificateList() {
                 </select>
               </div>
 
-              {/* Si seleccionó "Otro", se habilita el textarea para escribir el motivo */}
               {reasonOption === 'Otro' && (
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">
-                    Describe detalladamente el motivo de anulación: *
+                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                    Describe el motivo: *
                   </label>
                   <textarea
                     rows="3"
                     required
                     value={customReason}
                     onChange={(e) => setCustomReason(e.target.value)}
-                    placeholder="Escribe aquí el motivo específico por el cual se revoca el documento..."
-                    className="w-full p-2.5 rounded-lg border border-slate-200 focus:outline-none focus:border-rose-500 text-slate-700"
+                    placeholder="Escribe el motivo de la anulación..."
+                    className="w-full p-2 rounded-lg border border-slate-300 text-[11px] focus:outline-none focus:border-blue-500 text-slate-700"
                   />
                 </div>
               )}
@@ -341,14 +326,14 @@ export default function CertificateList() {
                 <button
                   type="button"
                   onClick={() => setShowRevokeModal(false)}
-                  className="px-4 py-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 font-semibold cursor-pointer"
+                  className="px-3 py-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-medium cursor-pointer"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="px-4 py-2 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-semibold transition cursor-pointer disabled:opacity-50"
+                  className="px-3.5 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold cursor-pointer disabled:opacity-50"
                 >
                   {submitting ? 'Revocando...' : 'Confirmar Revocación'}
                 </button>
@@ -358,13 +343,13 @@ export default function CertificateList() {
         </div>
       )}
 
-      {/* MODAL PARA VER MOTIVO DE ANULACIÓN */}
+      {/* MODAL PARA VER EL MOTIVO DE ANULACIÓN */}
       {viewReasonModal && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl border border-slate-100 space-y-3">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl max-w-xs w-full p-4 shadow-xl border border-slate-200 space-y-3">
             <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-              <h3 className="font-bold text-xs text-slate-800 uppercase tracking-wider">
-                Motivo de Revocación Registrado
+              <h3 className="font-bold text-xs text-slate-800">
+                Motivo de Revocación
               </h3>
               <button 
                 onClick={() => setViewReasonModal(false)}
@@ -373,13 +358,13 @@ export default function CertificateList() {
                 <X className="w-4 h-4" />
               </button>
             </div>
-            <p className="text-xs text-slate-600 bg-slate-50 p-3 rounded-lg border border-slate-200 italic leading-relaxed">
+            <p className="text-xs text-slate-600 bg-slate-50 p-2.5 rounded border border-slate-200 italic">
               "{currentReason}"
             </p>
             <div className="text-right">
               <button
                 onClick={() => setViewReasonModal(false)}
-                className="px-3.5 py-1.5 bg-slate-800 text-white rounded-lg text-xs font-semibold hover:bg-slate-900 cursor-pointer"
+                className="px-3 py-1 bg-slate-800 text-white rounded text-xs hover:bg-slate-900 cursor-pointer"
               >
                 Cerrar
               </button>
