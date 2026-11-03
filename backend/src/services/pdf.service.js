@@ -19,7 +19,7 @@ const generateCertificatePdfBuffer = (data, qrDataUrl) => {
     const w = doc.page.width;   // 841.89 pt
     const h = doc.page.height;  // 595.28 pt
 
-    // Ruta de la imagen del logo
+    // Ruta de la imagen del logo oficial
     const logoPath = path.join(__dirname, '../assets/logo.png');
 
     // Factores de escala (viewBox 1000 x 707 a A4 Landscape)
@@ -36,9 +36,12 @@ const generateCertificatePdfBuffer = (data, qrDataUrl) => {
     // MARCOS Y FONDOS VECTORIALES (SVG A PDFKIT)
     // =========================================================================
     if (esOpcion2) {
-      // --- OPCIÓN 2: GEOMÉTRICA TECH ---
+      // -----------------------------------------------------------------------
+      // OPCIÓN 2: GEOMÉTRICA TECH
+      // -----------------------------------------------------------------------
       doc.save();
 
+      // Marco fino rectangular
       doc.lineWidth(1)
          .strokeColor('#008DDA')
          .opacity(0.35)
@@ -46,11 +49,20 @@ const generateCertificatePdfBuffer = (data, qrDataUrl) => {
          .stroke();
       doc.opacity(1);
 
-      doc.fillColor('#0B192C').polygon([px(0), py(0)], [px(115), py(0)], [px(0), py(115)]).fill();
-      doc.fillColor('#008DDA').polygon([px(0), py(115)], [px(115), py(0)], [px(135), py(0)], [px(0), py(135)]).fill();
-      doc.fillColor('#41C9E2').opacity(0.8).polygon([px(0), py(135)], [px(135), py(0)], [px(145), py(0)], [px(0), py(145)]).fill();
+      // Polígonos Superior Izquierda
+      doc.fillColor('#0B192C')
+         .polygon([px(0), py(0)], [px(115), py(0)], [px(0), py(115)])
+         .fill();
+      doc.fillColor('#008DDA')
+         .polygon([px(0), py(115)], [px(115), py(0)], [px(135), py(0)], [px(0), py(135)])
+         .fill();
+      doc.fillColor('#41C9E2')
+         .opacity(0.8)
+         .polygon([px(0), py(135)], [px(135), py(0)], [px(145), py(0)], [px(0), py(145)])
+         .fill();
       doc.opacity(1);
 
+      // Barras laterales (Ecualizador)
       doc.save();
       doc.fillColor('#008DDA').opacity(0.35);
       doc.roundedRect(px(10), py(210), px(3.5), py(20), 1).fill();
@@ -58,6 +70,7 @@ const generateCertificatePdfBuffer = (data, qrDataUrl) => {
       doc.roundedRect(px(26), py(180), px(3.5), py(55), 1).fill();
       doc.restore();
 
+      // Red de nodos inferior izquierda
       doc.save();
       doc.strokeColor('#008DDA').lineWidth(1).opacity(0.35);
       doc.moveTo(px(30), py(580)).lineTo(px(65), py(540)).stroke();
@@ -68,9 +81,15 @@ const generateCertificatePdfBuffer = (data, qrDataUrl) => {
       doc.circle(px(100), py(565), 2.5).fill();
       doc.restore();
 
-      doc.fillColor('#0B192C').polygon([px(0), py(707)], [px(0), py(580)], [px(95), py(707)]).fill();
-      doc.fillColor('#008DDA').polygon([px(0), py(707)], [px(95), py(707)], [px(190), py(707)], [px(0), py(645)]).fill();
+      // Polígonos Inferior Izquierda
+      doc.fillColor('#0B192C')
+         .polygon([px(0), py(707)], [px(0), py(580)], [px(95), py(707)])
+         .fill();
+      doc.fillColor('#008DDA')
+         .polygon([px(0), py(707)], [px(95), py(707)], [px(190), py(707)], [px(0), py(645)])
+         .fill();
 
+      // Circuitos superior derecha
       doc.save();
       doc.strokeColor('#008DDA').lineWidth(1.6).lineCap('round');
       doc.moveTo(px(890), py(0)).lineTo(px(940), py(50)).lineTo(px(1000), py(50)).stroke();
@@ -79,18 +98,32 @@ const generateCertificatePdfBuffer = (data, qrDataUrl) => {
       doc.circle(px(1000), py(50), 2.5).fill();
       doc.restore();
 
-      doc.fillColor('#0B192C').polygon([px(1000), py(0)], [px(885), py(0)], [px(1000), py(115)]).fill();
-      doc.fillColor('#008DDA').polygon([px(1000), py(115)], [px(885), py(0)], [px(870), py(0)], [px(1000), py(130)]).fill();
+      // Polígonos Superior Derecha
+      doc.fillColor('#0B192C')
+         .polygon([px(1000), py(0)], [px(885), py(0)], [px(1000), py(115)])
+         .fill();
+      doc.fillColor('#008DDA')
+         .polygon([px(1000), py(115)], [px(885), py(0)], [px(870), py(0)], [px(1000), py(130)])
+         .fill();
 
-      doc.fillColor('#0B192C').polygon([px(1000), py(707)], [px(890), py(707)], [px(1000), py(595)]).fill();
-      doc.fillColor('#008DDA').opacity(0.4).polygon([px(1000), py(707)], [px(865), py(707)], [px(1000), py(570)]).fill();
+      // Polígonos Inferior Derecha
+      doc.fillColor('#0B192C')
+         .polygon([px(1000), py(707)], [px(890), py(707)], [px(1000), py(595)])
+         .fill();
+      doc.fillColor('#008DDA')
+         .opacity(0.4)
+         .polygon([px(1000), py(707)], [px(865), py(707)], [px(1000), py(570)])
+         .fill();
 
       doc.restore();
 
     } else {
-      // --- OPCIÓN 1: FORMAL ELITE MONUMENTAL CON GUILLOCHE ---
+      // -----------------------------------------------------------------------
+      // OPCIÓN 1: FORMAL ELITE MONUMENTAL CON GUILLOCHE
+      // -----------------------------------------------------------------------
       doc.save();
 
+      // Guilloche / Roseta central
       doc.save();
       doc.strokeColor('#0284C7').lineWidth(0.8).opacity(0.06);
       const cx = px(500);
@@ -110,12 +143,14 @@ const generateCertificatePdfBuffer = (data, qrDataUrl) => {
       });
       doc.restore();
 
+      // Marcos Perimetrales
       doc.lineWidth(5).strokeColor('#0A1931').rect(px(15), py(15), px(970), py(677)).stroke();
       doc.lineWidth(2).strokeColor('#FFFFFF').rect(px(22), py(22), px(956), py(663)).stroke();
       doc.lineWidth(2).strokeColor('#0284C7').rect(px(28), py(28), px(944), py(651)).stroke();
       doc.lineWidth(0.8).strokeColor('#0A1931').opacity(0.2).rect(px(35), py(35), px(930), py(637)).stroke();
       doc.opacity(1);
 
+      // Esquinas Biseladas Sólidas
       doc.fillColor('#0A1931');
       doc.polygon([px(15), py(75)], [px(75), py(15)], [px(45), py(15)], [px(15), py(45)]).fill();
       doc.polygon([px(985), py(75)], [px(925), py(15)], [px(955), py(15)], [px(985), py(45)]).fill();
@@ -128,6 +163,7 @@ const generateCertificatePdfBuffer = (data, qrDataUrl) => {
       doc.polygon([px(15), py(615)], [px(92), py(692)], [px(82), py(692)], [px(15), py(625)]).fill();
       doc.polygon([px(985), py(615)], [px(908), py(692)], [px(918), py(692)], [px(985), py(625)]).fill();
 
+      // Circuitos perimetrales
       doc.strokeColor('#0284C7').lineWidth(1.4).lineCap('round');
       doc.moveTo(px(15), py(115)).lineTo(px(35), py(115)).lineTo(px(48), py(102)).lineTo(px(48), py(80)).stroke();
       doc.circle(px(48), py(80), 2).fillColor('#0284C7').fill();
@@ -149,6 +185,7 @@ const generateCertificatePdfBuffer = (data, qrDataUrl) => {
       doc.moveTo(px(885), py(692)).lineTo(px(885), py(672)).lineTo(px(898), py(659)).lineTo(px(920), py(659)).stroke();
       doc.circle(px(920), py(659), 2.2).fillColor('#0284C7').fill();
 
+      // Pistas laterales punteadas
       doc.save();
       doc.strokeColor('#0284C7').lineWidth(1.2).lineCap('round');
       doc.moveTo(px(10), py(300)).lineTo(px(10), py(405)).dash(5, { space: 3 }).stroke();
@@ -166,10 +203,10 @@ const generateCertificatePdfBuffer = (data, qrDataUrl) => {
     }
 
     // =========================================================================
-    // 1. CABECERA INSTITUCIONAL CON LOGO REAL EN IMAGEN
+    // 1. CABECERA INSTITUCIONAL CON LOGO OFICIAL AMPLIO
     // =========================================================================
     const headerLeftX = esOpcion2 ? 84 : 70;
-    const headerY = 78;
+    const headerY = 80;
 
     // Membrete Izquierdo (Razón Social y RUC)
     doc.fontSize(13.5).fillColor('#0A1931').font('Helvetica-Bold')
@@ -177,23 +214,20 @@ const generateCertificatePdfBuffer = (data, qrDataUrl) => {
     doc.fontSize(8.5).fillColor('#64748B').font('Courier-Bold')
        .text('E.I.R.L. • RUC: 20608934521', headerLeftX, headerY + 16);
 
-    // Lado Derecho: Renderizado de la Imagen del Logo Oficial
-    const logoX = w - 190;
-    const logoY = headerY - 6;
+    // Lado Derecho: Renderizado del Logo Oficial ampliado a escala completa
+    const logoX = w - 245;
+    const logoY = headerY - 14;
 
     if (fs.existsSync(logoPath)) {
-      // Dibuja la imagen real de la empresa
       doc.image(logoPath, logoX, logoY, {
-        fit: [130, 45],
+        width: 175,
         align: 'right',
-        valign: 'center',
       });
     } else {
-      // Fallback tipográfico limpio en caso de que aún no se haya subido el archivo png
-      doc.fontSize(12).fillColor('#0284C7').font('Helvetica-Bold')
-         .text('MATT INNOVA', logoX, logoY + 4, { align: 'right', width: 130 });
-      doc.fontSize(7.5).fillColor('#0A1931').font('Helvetica-Bold')
-         .text('SOLUTION', logoX, logoY + 18, { align: 'right', width: 130, characterSpacing: 1.5 });
+      doc.fontSize(14).fillColor('#0284C7').font('Helvetica-Bold')
+         .text('MATT INNOVA', logoX, logoY + 4, { align: 'right', width: 175 });
+      doc.fontSize(8.5).fillColor('#0A1931').font('Helvetica-Bold')
+         .text('SOLUTION', logoX, logoY + 20, { align: 'right', width: 175, characterSpacing: 1.5 });
     }
 
     // =========================================================================
