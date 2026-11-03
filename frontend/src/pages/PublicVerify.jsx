@@ -86,7 +86,7 @@ export default function PublicVerify() {
       <div className="w-full max-w-sm mb-3 flex justify-between items-center">
         <button
           onClick={handleGoBack}
-          className="text-xs text-slate-300 hover:text-white flex items-center space-x-1.5 bg-slate-800/80 hover:bg-slate-700 px-3 py-1.5 rounded-lg border border-slate-700 transition cursor-pointer shadow-sm"
+          className="text-xs text-slate-300 hover:text-white flex items-center space-x-1.5 bg-slate-800/80 hover:bg-slate-700 px-3 py-1.5 rounded-lg border border-slate-700 transition cursor-pointer shadow-xs"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
           <span>Volver al Panel</span>
@@ -95,15 +95,19 @@ export default function PublicVerify() {
       </div>
 
       <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full overflow-hidden border border-slate-200">
-        {/* Cabecera Móvil Institucional */}
+        {/* Cabecera Móvil Institucional con Logo Oficial */}
         <div className="px-5 py-3 border-b border-slate-100 flex items-center justify-between bg-slate-50">
-          <div className="flex items-center space-x-2">
-            <div className="w-6 h-6 rounded bg-blue-600 text-white font-black flex items-center justify-center text-xs">
-              M
-            </div>
-            <span className="text-xs font-bold text-slate-800">certificados.mattinnova.com</span>
+          <div className="flex items-center space-x-2.5">
+            <img 
+              src="/logo.png" 
+              alt="Matt Innova Solution" 
+              className="h-7 w-auto max-w-[120px] object-contain" 
+            />
+            <span className="text-xs font-semibold text-slate-700 font-mono hidden sm:inline-block">
+              certificados.mattinnova.com
+            </span>
           </div>
-          <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded">
+          <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
             SSL Seguro
           </span>
         </div>
@@ -174,7 +178,7 @@ export default function PublicVerify() {
 
               <button
                 onClick={handleDownload}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold py-2.5 rounded-lg flex items-center justify-center space-x-2 transition shadow-sm cursor-pointer"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold py-2.5 rounded-lg flex items-center justify-center space-x-2 transition shadow-xs cursor-pointer"
               >
                 <Download className="w-4 h-4" />
                 <span>Descargar Copia de Respaldo PDF</span>
