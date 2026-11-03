@@ -1,5 +1,5 @@
 // frontend/src/components/layout/AppLayout.jsx
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
@@ -8,10 +8,13 @@ import {
   FileText, 
   QrCode, 
   Settings, 
-  LogOut 
+  LogOut,
+  Menu,
+  X
 } from 'lucide-react';
 
 export default function AppLayout({ children }) {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
   const userData = JSON.parse(localStorage.getItem('user_data') || '{}');
 
@@ -19,6 +22,12 @@ export default function AppLayout({ children }) {
     localStorage.removeItem('token_session');
     localStorage.removeItem('user_data');
     navigate('/login');
+  };
+
+  const closeSidebarOnMobile = () => {
+    if (window.innerWidth < 1024) {
+      setSidebarOpen(false);
+    }
   };
 
   const navItemsPrincipal = [
@@ -34,12 +43,32 @@ export default function AppLayout({ children }) {
   ];
 
   return (
-    <div className="flex h-screen w-full bg-[#F8FAFC] overflow-hidden">
-      {/* Sidebar Lateral */}
-      <aside className="w-64 bg-[#0C1322] flex flex-col justify-between text-slate-300 border-r border-slate-800 shrink-0">
+    <div className="flex h-screen w-full bg-[#F8FAFC] overflow-hidden relative">
+      {/* Fondo oscuro para móvil al abrir el sidebar */}
+      {sidebarOpen && (
+        <div 
+          onClick={() => setSidebarOpen(false)}
+          className="fixed inset-0 bg-black/60 backdrop-blur-xs z-40 lg:hidden transition-opacity"
+        />
+      )}
+
+      {/* Sidebar Lateral Responsivo */}
+      <aside 
+        className={`fixed lg:static top-0 bottom-0 left-0 z-50 w-64 bg-[#0C1322] flex flex-col justify-between text-slate-300 border-r border-slate-800 shrink-0 transform transition-transform duration-300 ease-in-out ${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+        }`}
+      >
         <div>
-          {/* Logo Empresa Oficial - Centrado y Ampliado */}
-          <div className="pt-6 pb-5 px-4 flex flex-col items-center justify-center border-b border-slate-800/60">
+          {/* Logo Empresa Oficial con botón de cierre móvil */}
+          <div className="pt-6 pb-5 px-4 flex flex-col items-center justify-center border-b border-slate-800/60 relative">
+            <button
+              onClick={() => setSidebarOpen(false)}
+              className="lg:hidden absolute top-4 right-3 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/60 transition-colors"
+              aria-label="Cerrar menú"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
             <div className="w-full flex items-center justify-center">
               <img 
                 src="/logo.png" 
@@ -65,6 +94,7 @@ export default function AppLayout({ children }) {
                   <NavLink
                     key={item.path}
                     to={item.path}
+                    onClick={closeSidebarOnMobile}
                     className={({ isActive }) =>
                       `flex items-center justify-between px-3 py-2.5 rounded-lg text-xs font-medium transition-all ${
                         isActive
@@ -98,6 +128,7 @@ export default function AppLayout({ children }) {
                   <NavLink
                     key={item.path}
                     to={item.path}
+                    onClick={closeSidebarOnMobile}
                     className={({ isActive }) =>
                       `flex items-center justify-between px-3 py-2.5 rounded-lg text-xs font-medium transition-all ${
                         isActive
@@ -123,7 +154,10 @@ export default function AppLayout({ children }) {
         {/* Cerrar Sesión */}
         <div className="p-4 border-t border-slate-800/60">
           <button
-            onClick={handleLogout}
+            onClick={() => {
+              closeSidebarOnMobile();
+              handleLogout();
+            }}
             className="flex items-center space-x-3 text-xs text-rose-400 hover:text-rose-300 transition-colors w-full px-3 py-2 rounded-lg hover:bg-rose-500/10 font-medium"
           >
             <LogOut className="w-4 h-4" />
@@ -133,10 +167,20 @@ export default function AppLayout({ children }) {
       </aside>
 
       {/* Contenedor Principal */}
-      <div className="flex-1 flex flex-col h-screen overflow-y-auto">
-        <header className="h-16 bg-white border-b border-slate-200 px-8 flex items-center justify-end space-x-4 shrink-0 shadow-sm">
-          <div className="flex items-center space-x-3">
-            <div className="w-9 h-9 bg-blue-700 text-white font-semibold rounded-full flex items-center justify-center text-xs shadow-sm">
+      <div className="flex-1 flex flex-col h-screen overflow-y-auto w-full">
+        <header className="h-16 bg-white border-b border-slate-200 px-4 sm:px-8 flex items-center justify-between shrink-0 shadow-xs">
+          {/* Botón Hamburguesa Móvil */}
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="lg:hidden p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
+            aria-label="Abrir menú"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+
+          {/* Perfil de Usuario */}
+          <div className="flex items-center space-x-3 ml-auto">
+            <div className="w-9 h-9 bg-blue-700 text-white font-semibold rounded-full flex items-center justify-center text-xs shadow-xs">
               AR
             </div>
             <div className="text-left">
@@ -148,7 +192,7 @@ export default function AppLayout({ children }) {
           </div>
         </header>
 
-        <main className="p-8 flex-1 bg-[#F8FAFC]">
+        <main className="p-4 sm:p-8 flex-1 bg-[#F8FAFC]">
           {children}
         </main>
       </div>
